@@ -1,0 +1,29 @@
+/* Primero, coloca las directivas @import */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Luego, coloca las directivas de Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tus estilos personalizados a continuación */
+.tracking-custom {
+    letter-spacing: 0.02em; /* Ajusta esto para el 2% */
+}
+
+.navlink:hover svg path {
+    stroke: #1DA1F2; /* Reemplaza #1DA1F2 con el color deseado */
+}
+
+.fade-change {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.fade-change-enter {
+    opacity: 1;
+    transform: scale(1);
+}
+
