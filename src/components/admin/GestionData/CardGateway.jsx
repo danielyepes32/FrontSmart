@@ -20,7 +20,7 @@ const CardGateway = ({onOpen, metersLength}) => {
             height={40}
             radius="xs"
             width={40}
-            src='../../../public/vite.svg'
+            src='/vite.svg'
           />
           <div className="flex flex-col">
             <p className="text-md">Gateways operativos</p>

@@ -12,7 +12,7 @@ const GatewayCard = ({ metersLength, animate, handleOnclickCleanFilter }) => {
                         height={40}
                         radius="xs"
                         width={40}
-                        src="../../../public/vite.svg" // Asegúrate de que la ruta de la imagen sea correcta
+                        src="/vite.svg" // Asegúrate de que la ruta de la imagen sea correcta
                     />
                     <div className="flex flex-col">
                         <p className="text-md">Gateways operativos</p>

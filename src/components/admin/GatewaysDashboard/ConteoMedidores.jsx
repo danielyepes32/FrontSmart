@@ -13,7 +13,7 @@ const ConteoMedidores = ({ isLoading, isExclusive, setIsExclusive, chartData }) 
                         height={40}
                         radius="xs"
                         width={40}
-                        src="../../../public/vite.svg" // Asegúrate de que la ruta de la imagen sea correcta
+                        src="/vite.svg" // Asegúrate de que la ruta de la imagen sea correcta
                     />
                     <div className="grid grid-cols-10 w-full h-full">
                         <div className="flex flex-col col-span-5">
