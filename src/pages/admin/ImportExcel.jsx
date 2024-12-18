@@ -5,7 +5,7 @@ import {
     } from '@nextui-org/button';
 import { FiUploadCloud } from "react-icons/fi";
 import { SiMicrosoftexcel } from "react-icons/si";  // Icono de Excel
-const socket = new WebSocket('ws://localhost:8001/ws/data/');
+const socket = new WebSocket('ws://3.135.197.152:8001/ws/data/');
 import apiService from '../../services/apiService';
 import {     
     Card,

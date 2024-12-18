@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-import apiService from "../../services/apiService";
+import apiService from "../../../services/apiService";
 //Libreria para hacer un parse a los datos de tipo fecha
 //Importar luxon para poder agregar zona horaria a un dato de tipo Fecha
 import { DateTime } from 'luxon';
 import {parseAbsoluteToLocal} from "@internationalized/date";
-import ConteoMedidores from "../../components/admin/GatewaysDashboard/ConteoMedidores";
-import GatewayCard from "../../components/admin/GatewaysDashboard/GatewayCard";
-import SearchFiltersCard from "../../components/admin/GatewaysDashboard/FiltrosBusqueda";
-import ReadingCountPieChart from "../../components/admin/GatewaysDashboard/ReadingCountPieChart";
+import ConteoMedidores from "../../../components/admin/GatewaysDashboard/ConteoMedidores";
+import GatewayCard from "../../../components/admin/GatewaysDashboard/GatewayCard";
+import SearchFiltersCard from "../../../components/admin/GatewaysDashboard/FiltrosBusqueda";
+import ReadingCountPieChart from "../../../components/admin/GatewaysDashboard/ReadingCountPieChart";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -159,7 +159,7 @@ const GatewayDashboard = ({ sidebar }) => {
     
         const controller = new AbortController();
         const signal = controller.signal;
-    
+        
         setIsLoading(true);
         apiService.getGatewayData(endPoint, params, signal)
           .then((data) => {
@@ -255,7 +255,7 @@ const GatewayDashboard = ({ sidebar }) => {
     }
 
     return (
-        <div className={`p-4 bg-gray-200 flex h-full lg:h-screen flex-col col-span-6 overflow-auto block`}>
+        <div className={`p-4 bg-gray-200 flex h-full w-full flex-col col-span-6 block`}>
             <div className="w-full h-full grid grid-cols-9 rounded-[20px] items-center flex justify-center">
                 <ConteoMedidores 
                     isLoading={isLoading}

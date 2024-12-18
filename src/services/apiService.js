@@ -19,7 +19,7 @@ export const getGatewayData = async (endPoint, params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(`${baseUrl}${endPoint}/?${queryString}`, {
-      signal, // Pasar la señal de aborto
+      signal: signal || undefined, // Pasar la señal de aborto
     });
     return response.data;
   } catch (error) {
@@ -28,8 +28,20 @@ export const getGatewayData = async (endPoint, params, signal) => {
     } else {
       console.error('Error fetching gateway data:', error);
     }
-    throw error;
+    if (!axios.isCancel(error)) {
+      throw error;
+    }
   }
+};
+
+export const getConteoIncidencias = async (params) => { 
+  try { const queryString = new URLSearchParams(params).toString(); 
+    const response = await axios.get(`${baseUrl}conteo-incidencias/?${queryString}`); 
+    console.log(response.data); return response.data; 
+  } catch (error) { 
+    console.error('Error fetching conteo de incidencias:', error); 
+    throw error; 
+  } 
 };
 
 // Servicio para descargar la plantilla
@@ -309,5 +321,6 @@ export default {
   autocompleteGateway,
   getIncidencia,
   getGatewayData,
-  downloadTemplate
+  downloadTemplate,
+  getConteoIncidencias
 };

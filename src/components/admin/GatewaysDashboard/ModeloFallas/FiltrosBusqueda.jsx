@@ -4,7 +4,7 @@ import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 //Libreria para hacer un parse a los datos de tipo fecha
 //Importar luxon para poder agregar zona horaria a un dato de tipo Fecha
 import { DateTime } from 'luxon';
-import { capitalize } from "../../../utils/utils";
+import { capitalize } from "../../../../utils/utils";
 import {parseZonedDateTime} from "@internationalized/date";
 import { 
     Card, 
@@ -17,12 +17,12 @@ import {
     DropdownMenu,
     DropdownItem,
 } from "@nextui-org/react";
-import { ChevronDownIcon } from "../Shared/Icons/ChevronDownIcon";
+import { ChevronDownIcon } from "../../Shared/Icons/ChevronDownIcon";
 
 const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, setDate, date, selectedKeys, setSelectedKeys, onSearchChange, setFilterValue }) => {
 
     return (
-    <div className="w-full h-full col-span-5 bg-white shadow-xl ml-2 rounded-[20px]">
+    <div className="w-full h-full bg-whiterounded-[20px]">
         <Card className="w-full h-full margin-auto">
             <CardHeader className="flex gap-3 h-1/9 py-2.5">
                 <div className="flex flex-col">
@@ -36,6 +36,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                 >
                 {/*Aquí se configura el autocomplete*/}
                 <div className='flex flex-col w-full h-full'>
+                    {/*
                     <span className="font-poppins font-regular text-gray-500 text-sm"> Filtrado por gateway</span>
                     <Autocomplete 
                         className="w-full bg-gray-100 rounded-xl" 
@@ -82,6 +83,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                             ))
                             }
                     </Autocomplete>
+                    */}
                     <span className="font poppins font-regular mt-5 text-gray-500">Filtrado por fecha</span>
                     <DateRangePicker
                         hideTimeZone
@@ -136,7 +138,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                                 variant="flat"
                                 closeOnSelect={false}
                                 selectedKeys={selectedKeys}
-                                selectionMode="multiple"
+                                selectionMode="single"
                                 //selectedIcon={<FaCheck />}
                                 onSelectionChange={setSelectedKeys}
                                 className="w-full rounded-lg text-left"

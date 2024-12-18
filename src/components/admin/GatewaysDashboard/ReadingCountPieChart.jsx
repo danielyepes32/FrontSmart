@@ -27,7 +27,7 @@ const ReadingCountPieChart = ({ pieChartData, setSelectedCreators }) => {
     };
 
     return (
-        <div className="h-1/2 w-full bg-white shadow-xl rounded-[20px]">
+        <div className="flex-grow w-full bg-white shadow-xl rounded-[20px]">
             <div className="flex col-span-4 w-full h-full px-5">
                 <div className="flex flex-col bg-white w-full h-full">
                     <div className="flex justify-start place-items-center h-auto w-full px-5 py-3">
@@ -36,7 +36,7 @@ const ReadingCountPieChart = ({ pieChartData, setSelectedCreators }) => {
                         </span>
                     </div>
                     <Divider />
-                    <div className="p-5 w-full h-full">
+                    <div className="px-3 py-2 w-full h-full">
                         {pieChartData ? (
                             <Pie data={pieChartData} options={chartOptions} />
                         ) : (

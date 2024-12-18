@@ -8,8 +8,9 @@ import IngestaError from './admin/IngestError';
 import GestionData from './admin/GestionData';
 import ExcelReader from './admin/UploadExcel';
 import FileUpload from './admin/ImportExcel';
-import GatewayDashboard from './admin/GatewaysDashboard';
+import GatewayDashboard from './admin/dashboard/GatewaysDashboard';
 import PowerView from './admin/PowerBI';
+import DashboardMain from './admin/DashboardMain';
 
 const Admin = () => {
 
@@ -56,7 +57,7 @@ const Admin = () => {
         <Route path="/gestion" element={<GestionData sidebar={sidebar} />} />
         <Route path="/excel" element={<ExcelReader sidebar={sidebar} />} />
         <Route path="/upload" element={<FileUpload sidebar={sidebar} />} />
-        <Route path="/gateways" element={<GatewayDashboard sidebar={sidebar} />} />
+        <Route path="/gateways/*" element={<DashboardMain sidebar={sidebar} />} />
         <Route path="/power_view" element={<PowerView sidebar={sidebar} />} />
       </Routes>
       {/* Botón del menú móvil */}
