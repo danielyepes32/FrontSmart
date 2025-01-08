@@ -44,6 +44,38 @@ const incidenciaMapping = {
     recomendaciones:
       "Se recomienda cambiar el medidor por otro medidor con radio para obtener la lectura por radiofrecuencia (Vía Antena o Walk by) para asi no afectar el parque de medidores ultrasónicos. Asimismo, se solicita que se envíe correo para retirar el medidor de la plataforma EMRC para mantener una base de datos real y actualizada.",
   },
+  "DIFICIL ACCESO": {
+    detalle:
+      "Se intentó tomar lectura por radio portátil (Walk by), sin embargo no se obtuvo respuesta. No se puede verificar el medidor, se requiere realizar una visita para la inspección, asi poder levantar la información respectiva del medidor y actualizar la Base de datos recopilada.",
+    conclusiones:
+      "Suministro con tapa sellada, o los suministros se encuentran ubicados en zonas de difícil acceso, no se puede verificar el medidor ni obtener lectura por radiofrecuencia.",
+    recomendaciones:
+      "Se recomienda realizar una visita de inspección, para asi revisar el estado del medidor ultrasónico.",
+  },
+  "DIGITOS INCOMPLETOS": {
+    detalle:
+      "El operario de campo intentó tomar lectura por radio portátil (Walk by), sin embargo no se obtuvo respuesta. Se verificó que el medidor presenta falla dígitos incompletos en el display.",
+    conclusiones:
+      "Medidor presenta fallo digitos incompletos en el display, no se puede obtener lectura por radiofrecuencia.",
+    recomendaciones:
+      "Se recomienda cambiar el medidor por otro operativo para obtener la lectura por radiofrecuencia (Vía Antena o Walk by) para asi no afectar el parque de medidores ultrasónicos. Asimismo, se solicita que se envíe correo para retirar el medidor de la plataforma EMRC para mantener una base de datos real y actualizada.",
+  },
+  "MEDIDOR MECANICO": {
+    detalle:
+      "El operario de campo intentó tomar lectura por radio portátil (Walk by), sin embargo no se obtuvo respuesta. Se revisó el suministro y se encontró medidor mecánico.",
+    conclusiones:
+      "No se encontró medidor ultrasónico en la caja de suministro.",
+    recomendaciones:
+      "Se recomienda la instalación de medidor ultrasónico en el suministro.",
+  },
+  "NO SE UBICA": {
+    detalle:
+      "Se intentó tomar lectura por radio portátil (Walk by), sin embargo no se obtuvo respuesta. No se puede verificar el medidor, se requiere realizar una visita para la inspección, para así poder levantar la información respectiva del medidor y actualizar la Base de datos recopilada.",
+    conclusiones:
+      "No se encontró medidor ultrasónico.",
+    recomendaciones:
+      "Se recomienda realizar una visita de inspección para verificar el medidor.",
+  },
   // Agrega más casos según la tabla.
 };
 
