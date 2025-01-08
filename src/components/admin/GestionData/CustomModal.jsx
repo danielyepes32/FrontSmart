@@ -103,7 +103,7 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
       try {
         // Consultar la API para obtener los datos de los últimos 24 horas
         console.log("Data consulta: ", selectedGateway.equip_id)
-        const response = await axios.get(`http://localhost:8000/api/v1/logs/${selectedGateway.equip_id}/?page=${page}&page_size=${rowsPerPage}`);
+        const response = await axios.get(`http://3.135.197.152:8000/api/v1/logs/${selectedGateway.equip_id}/?page=${page}&page_size=${rowsPerPage}`);
         const data = response.data.results;
         console.log("Data del fetch: ", response)
         setMeters(data)

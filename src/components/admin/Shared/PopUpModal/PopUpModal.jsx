@@ -19,6 +19,7 @@ import MainModal from './MainModal/MainModal';
 import TableInfo from './TableInfoModal/TableInfo';
 import ModalTableInfo from './TableInfoModal/ModalTableInfo';
 import ShowImage from './PopUpModalContent/ShowImage';
+import GenerateReport from './PopUpModalContent/GenerateReport';
 
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
 const INITIAL_VISIBLE_COLUMNS = ["alarm_pk", "meter_code", "falla_desc","falla_type","alarm_date"];
@@ -91,7 +92,7 @@ const PopUpModal = ({
   //Update 
   //Se almacena el archivo de la imagen seleccionada en el modal de incidencia en forma de ruta temporal para ser previsualizado
   const [image, setImage] = React.useState(null);
-
+  const [imageSrcFile, setImageSrcFile] = React.useState(null);
   const [imageFile, setImageFile] = React.useState(null);
   //Función para obtener la imagen del modal
   const handleImageChange = (e) => {
@@ -407,6 +408,16 @@ const PopUpModal = ({
               image={image}
             />
           )
+        case 'generateReport':
+          return (
+            <GenerateReport
+              meter={meter}
+              handleImageChange={handleImageChange}
+              image={image}
+              imageSrcFile={imageSrcFile}
+              setImageSrcFile={setImageSrcFile}
+            />
+          );
         case 'ShowImage':
           return (
             <ShowImage
@@ -485,6 +496,8 @@ const PopUpModal = ({
           handleCreateIncidencia = {handleCreateIncidencia}
           selectedModify = {selectedModify}
           meter={meter}
+          imageFile={imageFile}
+          imageSrcFile={imageSrcFile}
       />
 
     {/*Modal para las registros en revision e incidencia*/}

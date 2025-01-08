@@ -113,6 +113,11 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
                     setSelectedMeter(user)
                     onOpen()
                     break;
+                  case 'generateReport':
+                      setActionKey("generateReport")
+                      setSelectedMeter(user)
+                      onOpen()
+                      break;
                   default:
                     console.log('No function for this item.');
                 }
@@ -123,13 +128,11 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
                 className="hover:bg-default-100"
               >Ver Detalles
               </DropdownItem>
-              {/*
               <DropdownItem
-                key='edit'
-                className="hover:bg-default-100"
+                key='generateReport'
+                className={`hover:bg-default-100 ${user.tipo === "INCIDENCIA" ? '' : 'hidden'}`} //Esconder en caso de no ser un registro de tipo INCIDENCIA
               >
-                Editar Datos</DropdownItem>
-              */}
+              Generar Reporte</DropdownItem>
               <DropdownItem
                 key='ScaleAlarm'
                 className={`text-danger hover:bg-red-200 ${user.tipo === "INCIDENCIA" ? 'hidden' : ''}`} //Esconder en caso de ser un registro de tipo INCIDENCIA
