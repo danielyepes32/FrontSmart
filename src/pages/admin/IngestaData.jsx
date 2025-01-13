@@ -73,6 +73,9 @@ export default function IngestaAdmin(sidebar) {
   //Esta consulta se ejecuta y usa los parametros de consulta
   useEffect(() => {
 
+    if(hasSearchFilter){
+      return;
+    }
     //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
     const fetchData = async () => {
       //Al estar ejecutando el fetch activamos el loading de la data
@@ -124,7 +127,7 @@ export default function IngestaAdmin(sidebar) {
     };
     fetchData();
     //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
-  }, [page, rowsPerPage, sortDescriptor, statusSelection , statusFilter, hasSearchFilter===false]);
+  }, [page, rowsPerPage, sortDescriptor, statusSelection , statusFilter, hasSearchFilter]);
   
   // Función para convertir un nombre en formato UID
   const convertToUID = (name) => {
@@ -219,8 +222,11 @@ export default function IngestaAdmin(sidebar) {
 
       setIsLoading(true);
 
+      const controller = new AbortController();
+      const signal = controller.signal;
       const fetchSuggestions = async () => {
         try {
+          
         //inizializamos los parametros de consultas a la API de consumo
         //console.log("No ha salido")
         const params = {
@@ -229,23 +235,26 @@ export default function IngestaAdmin(sidebar) {
           page_size : rowsPerPage
         };
 
-          const response = await apiService.autocompleteMeters(params);;
+          const response = await apiService.autocompleteMeters(params, signal);
           setMeters(response["results"]);
           //usamos el componente "count" de la consulta para establecer el tamaño de los registros
           setMetersLength(response["count"]);
+          setIsLoading(false)
         } catch (error) {
           //En caso de error en el llamado a la API se ejecuta un console.error
           console.error('Error fetching initial meters:', error);
-        } finally {
-          //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
-          setIsLoading(false);
-          //console.log("salio");
-        }
+        } 
       };
 
       fetchSuggestions();
+
+      // Retornar una función de limpieza que cancela la solicitud activa
+      return () => {
+        controller.abort();
+      };
     }
   }, [filterValue]);
+
   //Aquí terminan los llamados a la API
   //----------------------------------------------------------------------------------------------------
 

@@ -28,7 +28,6 @@ const ConteoMedidores = ({ isLoading, isExclusive, setIsExclusive, chartData }) 
                             <span className="mr-3">Conteo exclusivo </span>
                             <Switch
                                 isDisabled={isLoading}
-                                isChecked={isExclusive}
                                 onChange={() => setIsExclusive(prev => !prev)}
                                 aria-label="Automatic updates"
                             />

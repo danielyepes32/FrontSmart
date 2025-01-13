@@ -260,7 +260,8 @@ export default function IngestaAdmin(sidebar) {
     if (filterValue.length > 0) {
 
       setIsLoading(true);
-
+      const controller = new AbortController();
+      const signal = controller.signal;
       const fetchSuggestions = async () => {
         try {
         //inizializamos los parametros de consultas a la API de consumo
@@ -271,7 +272,7 @@ export default function IngestaAdmin(sidebar) {
           page_size : rowsPerPage
         };
 
-          const response = await apiService.autocompleteCombined(params);;
+          const response = await apiService.autocompleteCombined(params, signal);
           setMeters(response["results"]);
           //usamos el componente "count" de la consulta para establecer el tamaño de los registros
           setMetersLength(response["count"]);
@@ -286,6 +287,10 @@ export default function IngestaAdmin(sidebar) {
       };
 
       fetchSuggestions();
+      // Retornar una función de limpieza que cancela la solicitud activa
+      return () => {
+        controller.abort();
+      };
     }
   }, [filterValue,page,hasSearchFilter===true]);
   //Aquí terminan los llamados a la API

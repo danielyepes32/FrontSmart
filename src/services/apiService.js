@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = 'http://3.135.197.152:8000/api/v1/';
+const baseUrl = 'http://localhost:8000/api/v1/';
 
 //servicio para hacerle get a los valores de los medidores
 const getAll = async (params) => {
@@ -24,7 +24,7 @@ export const getGatewayData = async (endPoint, params, signal) => {
     return response.data;
   } catch (error) {
     if (axios.isCancel(error)) {
-      console.warn('Request cancelled:', error.message);
+      console.warn('Request cancelled:', error.message, signal);
     } else {
       console.error('Error fetching gateway data:', error);
     }
@@ -163,28 +163,44 @@ export const postTriggerIncidencia = async (data) => {
 };
 
 //Servicio para generar el autocomplete
-const autocompleteMeters = async (params) => {
+const autocompleteMeters = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`autocomplete/?format=json&${queryString}`);
+    const response = await axios.get(baseUrl+`autocomplete/?format=json&${queryString}`,{
+      signal: signal || undefined
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
+    if (axios.isCancel(error)) {
+      console.warn('Request cancelled:', error.message, signal);
+    } else {
+      console.error('Error fetching gateway data:', error);
+    }
+    if (!axios.isCancel(error)) {
+      throw error;
+    }
   }
 };
 
+
 //Servicio para generar el autocomplete
-const autocompleteGateway = async (params) => {
+const autocompleteGateway = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`autocomplete-gateway/?format=json&${queryString}`);
-    console.log(response.data);
+    const response = await axios.get(baseUrl+`autocomplete-gateway/?format=json&${queryString}`,{
+      signal: signal || undefined, // Pasar la señal de aborto
+    });
     return response.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
+    if (axios.isCancel(error)) {
+      console.warn('Request cancelled:', error.message, signal);
+    } else {
+      console.error('Error fetching gateway data:', error);
+    }
+    if (!axios.isCancel(error)) {
+      throw error;
+    }
   }
 };
 
@@ -202,15 +218,23 @@ const autocompleteAlarms = async (params) => {
 };
 
 //Servicio para generar el autocomplete de las alarmas
-const autocompleteCombined = async (params) => {
+const autocompleteCombined = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`autocomplete-combinada/?format=json&${queryString}`);
+    const response = await axios.get(baseUrl+`autocomplete-combinada/?format=json&${queryString}`,{
+      signal: signal || undefined
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
+    if (axios.isCancel(error)) {
+      console.warn('Request cancelled:', error.message, signal);
+    } else {
+      console.error('Error fetching gateway data:', error);
+    }
+    if (!axios.isCancel(error)) {
+      throw error;
+    }
   }
 };
 

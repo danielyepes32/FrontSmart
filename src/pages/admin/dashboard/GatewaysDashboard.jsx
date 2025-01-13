@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import apiService from "../../../services/apiService";
 //Libreria para hacer un parse a los datos de tipo fecha
@@ -30,7 +30,7 @@ const GatewayDashboard = ({ sidebar }) => {
     const [filterValue, setFilterValue] = React.useState("");
     //Este dato almacena el valor que se está escribiendo en las inputs para modificar la latitude
     //Esta variable se refiere a los diferentes tipos de tapas que se pueden seleccionar puesto que esta input es un selector, se inicializa con el valor inicial del medidor
-    const [selectedKeys, setSelectedKeys] = React.useState(null);
+    const [selectedKeys, setSelectedKeys] = React.useState([]);
     //Este dato almacena el valor que se está escribiendo en las inputs para modificar la longitude
     const [page, setPage] = React.useState(1);
     //Variable para establecer si está en uso el autocompletado
@@ -49,7 +49,7 @@ const GatewayDashboard = ({ sidebar }) => {
     });
 
     // Detecta el cambio en metersLength y activa la animación
-    useEffect(() => {
+    useMemo(() => {
         // Activa la animación
         setAnimate(true);
 
@@ -70,7 +70,7 @@ const GatewayDashboard = ({ sidebar }) => {
         } else {
         setFilterValue("");
         }
-        console.log("Valor autocomplete: ", value)
+        //console.log("Valor autocomplete: ", value)
     }, []);
 
     // Función para convertir un nombre en formato UID
@@ -79,38 +79,38 @@ const GatewayDashboard = ({ sidebar }) => {
     };
     //--------------------------------------------------------------------------------------------------------------
     //Funciones condicionales 
-    //Función para obtener los gateways del autocomplete
     React.useEffect(() => {
-  
-        //Al estar ejecutando el fetch activamos el loading de la data
-        console.log("FilterValue: ", filterValue)
-        if (filterValue.length > 0) {
-          //setIsLoading(true);
-          const fetchSuggestions = async () => {
-            try {
-            //inizializamos los parametros de consultas a la API de consumo
-            //console.log("No ha salido")
+      if (filterValue.length > 0) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+    
+        const fetchSuggestions = async () => {
+          try {
             const params = {
               q: filterValue,
-              page:1,
-              page_size : 10
+              page: 1,
+              page_size: 10,
             };
-            
-            const response = await apiService.autocompleteGateway(params);;
+    
+            const response = await apiService.autocompleteGateway(params, signal);
             setSuggestions(response["results"]);
-                //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-            } catch (error) {
-              //En caso de error en el llamado a la API se ejecuta un console.error
-              console.error('Error fetching initial meters:', error);
-            } finally {
-              //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
-              //console.log("salio");
+          } catch (error) {
+            if (error.name !== "AbortError") {
+              console.error("Error fetching initial meters:", error);
             }
-          };
-
-          fetchSuggestions();
-        }
-      }, [filterValue,page,]);
+          }
+        };
+    
+        // Ejecutar la consulta
+        fetchSuggestions();
+    
+        // Retornar una función de limpieza que cancela la solicitud activa
+        return () => {
+          controller.abort();
+        };
+      }
+    }, [filterValue, page]);
+    
 
     //Fetch para traer los nombres de todos los creadores
     const fetchUniqueCreators = async () => {
@@ -132,7 +132,7 @@ const GatewayDashboard = ({ sidebar }) => {
     };
 
     //Aqui se guardan los creadores unicos al ejecutar el fetch de arriba
-    useEffect(() => {
+    useMemo(() => {
         const getCreators = async () => {
         const creators = await fetchUniqueCreators();
         setFormattedCreators(creators);
@@ -143,108 +143,122 @@ const GatewayDashboard = ({ sidebar }) => {
 
 
     useEffect(() => {
-        const fecha_gte = `${date.start.year}${date.start.month < 10 ? `0${date.start.month}` : date.start.month}${date.start.day < 10 ? `0${date.start.day}` : date.start.day}`;
-        const fecha_lte = `${date.end.year}${date.end.month < 10 ? `0${date.end.month}` : date.end.month}${date.end.day < 10 ? `0${date.end.day}` : date.end.day}`;
+      //console.log("Entra");
     
-        const params = {
-          start_date: fecha_gte,
-          end_date: fecha_lte,
-        };
+      const controller = new AbortController();
+      const signal = controller.signal;
     
-        if (selectedKeys) {
-          params.service_centers = selectedKeys;
-        }
+      const fetchData = async () => {
+        try {
+          const fecha_gte = `${date.start.year}${date.start.month < 10 ? `0${date.start.month}` : date.start.month}${date.start.day < 10 ? `0${date.start.day}` : date.start.day}`;
+          const fecha_lte = `${date.end.year}${date.end.month < 10 ? `0${date.end.month}` : date.end.month}${date.end.day < 10 ? `0${date.end.day}` : date.end.day}`;
     
-        const endPoint = isExclusive ? 'exclusivos-por-gateway' : 'no-exclusivos-por-gateway';
+          // Crear los parámetros de consulta
+          const params = new URLSearchParams();
+          params.append("start_date", fecha_gte);
+          params.append("end_date", fecha_lte);
     
-        const controller = new AbortController();
-        const signal = controller.signal;
-        
-        setIsLoading(true);
-        apiService.getGatewayData(endPoint, params, signal)
-          .then((data) => {
-            console.log('EndPoint: ', data);
+          if (selectedKeys) {
+            const serviceCentersArray = Array.from(selectedKeys);
+            serviceCentersArray.forEach((center) => params.append("service_centers", center));
+          }
     
-            setMetersLength(filteredGateway
-              ? data.find(item => item.gateway_id === filteredGateway).total_lecturas
+          const endPoint = isExclusive ? 'exclusivos-por-gateway' : 'no-exclusivos-por-gateway';
+    
+          setIsLoading(true);
+    
+          const data = await apiService.getGatewayData(endPoint, params, signal);
+          //console.log("EndPoint: ", data);
+    
+          // Procesar los datos (se mantiene la misma lógica que antes)
+          const metersLength = Array.isArray(data) && data.length > 0
+            ? filteredGateway
+              ? data.find((item) => item.gateway_id === filteredGateway)?.total_lecturas || 0
               : data[0].total_lecturas
-            );
+            : 0;
     
-            const groupedData = data.reduce((acc, item) => {
-              const { service_center, total_lecturas } = item;
-              if (!acc[service_center]) {
-                acc[service_center] = {
-                  service_center,
-                  total_lecturas: 0,
-                  gateways: [],
-                };
-              }
-              acc[service_center].total_lecturas += total_lecturas;
-              acc[service_center].gateways.push(item.gateway_id);
-              return acc;
-            }, {});
+          setMetersLength(metersLength);
     
-            const groupedArray = Object.values(groupedData);
-            const labels = groupedArray.map(item => item.service_center);
-            const totalLecturas = groupedArray.map(item => item.total_lecturas);
+          if (!data) return;
     
-            const colorMap = labels.reduce((acc, center, index) => {
-              acc[center] = `hsl(${(index * 360) / labels.length}, 70%, 50%)`;
-              return acc;
-            }, {});
-    
-            const pieColors = labels.map(center => colorMap[center]);
-    
-            setPieChartData({
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Total de Lecturas',
-                  data: totalLecturas,
-                  backgroundColor: pieColors,
-                  hoverOffset: 4,
-                },
-              ],
-            });
-    
-            const filteredData = selectedCreators
-              ? data.filter(item => item.service_center === selectedCreators)
-              : data;
-    
-            const labelsBar = filteredData.map(item => item.gateway_id);
-            const medidoresExclusivos = filteredData.map(item => item.medidores_exclusivos);
-    
-            setChartData({
-              labels: labelsBar,
-              datasets: [
-                {
-                  label: 'Medidores Exclusivos',
-                  data: medidoresExclusivos,
-                  backgroundColor: 'rgba(191, 219, 254, 1)',
-                  borderColor: 'rgba(191, 219, 254, 0.6)',
-                  borderWidth: 1,
-                },
-              ],
-            });
-          })
-          .catch((error) => {
-            if (error.name !== 'AbortError') {
-              console.error('Error fetching data:', error);
+          const groupedData = data.reduce((acc, item) => {
+            const { service_center, total_lecturas } = item;
+            if (!acc[service_center]) {
+              acc[service_center] = {
+                service_center,
+                total_lecturas: 0,
+                gateways: [],
+              };
             }
-          })
-          .finally(() => {
-            setIsLoading(false);
+            acc[service_center].total_lecturas += total_lecturas;
+            acc[service_center].gateways.push(item.gateway_id);
+            return acc;
+          }, {});
+    
+          const groupedArray = Object.values(groupedData);
+          const labels = groupedArray.map((item) => item.service_center);
+          const totalLecturas = groupedArray.map((item) => item.total_lecturas);
+    
+          const colorMap = labels.reduce((acc, center, index) => {
+            acc[center] = `hsl(${(index * 360) / labels.length}, 70%, 50%)`;
+            return acc;
+          }, {});
+    
+          const pieColors = labels.map((center) => colorMap[center]);
+    
+          setPieChartData({
+            labels: labels,
+            datasets: [
+              {
+                label: "Total de Lecturas",
+                data: totalLecturas,
+                backgroundColor: pieColors,
+                hoverOffset: 4,
+              },
+            ],
           });
     
-        return () => {
-          controller.abort();
-        };
-      }, [date, filteredGateway, selectedCreators, selectedKeys, isExclusive]);
+          const filteredData = selectedCreators
+            ? data.filter((item) => item.service_center === selectedCreators)
+            : data;
+    
+          const labelsBar = filteredData.map((item) => item.gateway_id);
+          const medidoresExclusivos = filteredData.map((item) => item.medidores_exclusivos);
+    
+          setChartData({
+            labels: labelsBar,
+            datasets: [
+              {
+                label: "Medidores Exclusivos",
+                data: medidoresExclusivos,
+                backgroundColor: "rgba(191, 219, 254, 1)",
+                borderColor: "rgba(191, 219, 254, 0.6)",
+                borderWidth: 1,
+              },
+            ],
+          });
+        } catch (error) {
+          if (error.name !== "AbortError") {
+            console.error("Error fetching data:", error);
+          }
+        } finally {
+          setIsLoading(false);
+        }
+      };
+    
+      fetchData();
+    
+      return () => {
+        //console.log("Abortando petición");
+        controller.abort();
+      };
+    }, [date, filteredGateway, selectedCreators, selectedKeys, isExclusive]);
+    
     
 
-    console.log("SelectedExclusive: ", isExclusive)
+    //console.log("SelectedExclusive: ", isExclusive)
     selectedKeys ? selectedKeys.forEach(value => {
-        console.log(value); // Imprime cada valor del Set
+        //console.log(value); // Imprime cada valor del Set
     }) : null;
 
     const handleOnclickCleanFilter  = () => {
