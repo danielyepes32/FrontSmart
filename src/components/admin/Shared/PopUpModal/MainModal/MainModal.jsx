@@ -121,20 +121,6 @@ const MainModal = (
         }
       };
 
-
-      React.useMemo(() => {
-        const fetchMeterData = async () => {
-          try {
-        const response = await apiService.getAll({ meter_code: meter.meter_code });
-        setMeterData(response.results[0]);
-          } catch (error) {
-        console.log("Error en extracción de datos del medidor: ", error);
-          }
-        };
-
-        fetchMeterData();
-      }, []);
-
       const handleFileChange = async (event) => {
         console.log("Datos medidores: ", meter)
         const file = event.target.files[0];
@@ -147,7 +133,6 @@ const MainModal = (
             const firstPage = pages[0];
     
             const form = pdfDoc.getForm();
-            console.log("Form: ", form);
     
             // Crear un textbox en la primera página
             const textBox = form.createTextField('customTextBox');
@@ -193,21 +178,32 @@ const MainModal = (
           const { detalle, conclusiones, recomendaciones } = assignIncidenciaData(
             meter.falla_desc
           );
+
+          let response = null
+          
+          try {
+            response = await apiService.getAll({ meter_code: meter.meter_code });
+            setMeterData(response.results[0]);
+            response = response.results[0];
+            //setIsMeterDataLoaded(true); // Marca que los datos están listos
+          } catch (error) {
+            alert("Error en extracción de datos del medidor: ", error);
+          }
           
           const diametro = meter.meter_code.substring(2,4) === 'KA' ? '15mm' : '20mm'
           // Lista de textos y posiciones
           const textsAndPositions = [
               { text: 'No. de informe', x: calculateXObject(215, 523, 'No. de informe'), y: 757 }, //Identificador del informe
-              { text: meterData.status_update_date, x: calculateXObject(215, 523, meterData.status_update_date), y: 746.5 }, //Fecha en la que se generó el informe
+              { text: response.status_update_date, x: calculateXObject(215, 523, response.status_update_date), y: 746.5 }, //Fecha en la que se generó el informe
               { text: meter.meter_code, x: calculateXObject(215, 523, meter.meter_code), y: 736 }, //Identificador del medidor
               { text: 'No. NIS del registro', x: calculateXObject(215, 523, 'No. NIS del registro'), y: 725 }, //Nis asociado al servicio
               { text: 'Calle de ejemplo Carrera 25 29-128', x: calculateXObject(215, 523, 'Calle de ejemplo Carrera 25 29-128'), y: 709 }, //Dirección del registro o cliente
               //Condiciones iniciales de instalación
-              { text: meterData.create_date, x: calculateXObject(53, 215, meterData.create_date), y: 668 }, //Fecha de registro en plataforma
+              { text: response.create_date, x: calculateXObject(53, 215, response.create_date), y: 668 }, //Fecha de registro en plataforma
               { text: 'Coordenadas de ubicación del medidor', x: calculateXObject(215, 422, 'Coordenadas de ubicación del medidor'), y: 668 }, //Coordenadas de ubicación del medidor
               { text: diametro, x: calculateXObject(420, 523, diametro), y: 668 }, //Diametro del medidor
               //Condiciones de visita a campo
-              { text: meterData.tapa_desc, x: calculateXObject(205, 510, meterData.tapa_desc), y: 620 },
+              { text: response.tapa_desc, x: calculateXObject(205, 510, response.tapa_desc), y: 620 },
               { 
                 text: detalle, 
                 x: 221, 
@@ -244,9 +240,6 @@ const MainModal = (
                 maxCharsPerLine: 120,
               },
           ];
-          
-          // Máximo número de caracteres por línea
-          const MAX_CHARS_PER_LINE = 80;
           
             // Generar posiciones para textos largos
             const processedTextsAndPositions = textsAndPositions.flatMap(({ text, x, start, end, y, maxCharsPerLine}) => {
