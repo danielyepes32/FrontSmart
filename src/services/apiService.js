@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = 'http://localhost:8000/api/v1/';
+const baseUrl = 'http://3.135.197.152:8000/api/v1/';
 
 //servicio para hacerle get a los valores de los medidores
 const getAll = async (params) => {
