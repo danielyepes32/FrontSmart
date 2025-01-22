@@ -27,7 +27,7 @@ const ScatterPlot = ({selectedGateway}) => {
       try {
         // Obtener datos de la API
         const response = await axios.get(
-          `http://3.135.197.152:8000/api/v1/logs/${selectedGateway.anchorKey}/`
+          `http://3.135.197.152:8000/api/v1/gateways/logs/${selectedGateway.anchorKey}/`
         );
         const data = response.data.results;
   
