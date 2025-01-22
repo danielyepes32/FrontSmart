@@ -73,12 +73,12 @@ const PopUpGestion = (
           //inizializamos los parametros de consultas a la API de consumo
           //console.log("No ha salido")
           const params = {
-            q: filterValue,
+            search: filterValue,
             page:1,
             page_size : 10
           };
           
-          const response = await apiService.autocompleteGateway(params);;
+          const response = await apiService.autocompleteGatewayMysql(params);;
           setSuggestions(response["results"]);
               //usamos el componente "count" de la consulta para establecer el tamaño de los registros
           } catch (error) {
@@ -171,9 +171,9 @@ const PopUpGestion = (
 
                             onClear={() => {setFilterValue("")}}
                             >
-                            {suggestions.map((medidor) => (
-                                <AutocompleteItem key={medidor.gateway_id} value={medidor.gateway_id}>
-                                    {medidor.gateway_id}
+                            {suggestions.map((gatewayMysql) => (
+                                <AutocompleteItem key={gatewayMysql.equip_id} value={gatewayMysql.equip_id}>
+                                    {gatewayMysql.equip_id}
                                 </AutocompleteItem>
                                 ))
                                 }

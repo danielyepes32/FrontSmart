@@ -1,11 +1,24 @@
 import axios from 'axios';
-const baseUrl = 'http://3.135.197.152:8000/api/v1/';
+const baseUrl = 'http://3.135.197.152:8000/api/v1/'; //3.135.197.152
 
 //servicio para hacerle get a los valores de los medidores
 const getAll = async (params) => {
   try {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`meters?format=json&${queryString}`);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+};
+
+//servicio para hacerle get a los valores de los medidores
+const getCountOnlineGateways = async (params) => {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await axios.get(baseUrl+`gateways/count_gateways_online/?format=json&${queryString}`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -204,6 +217,26 @@ const autocompleteGateway = async (params, signal) => {
   }
 };
 
+//Servicio para generar el autocomplete
+const autocompleteGatewayMysql = async (params, signal) => {
+  try {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await axios.get(baseUrl+`gateways/autocomplete-gateway-mysql/?format=json&${queryString}`,{
+      signal: signal || undefined, // Pasar la señal de aborto
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      console.warn('Request cancelled:', error.message, signal);
+    } else {
+      console.error('Error fetching gateway data:', error);
+    }
+    if (!axios.isCancel(error)) {
+      throw error;
+    }
+  }
+};
+
 //Servicio para generar el autocomplete de las alarmas
 const autocompleteAlarms = async (params) => {
   try {
@@ -346,5 +379,7 @@ export default {
   getIncidencia,
   getGatewayData,
   downloadTemplate,
-  getConteoIncidencias
+  getConteoIncidencias,
+  autocompleteGatewayMysql,
+  getCountOnlineGateways
 };

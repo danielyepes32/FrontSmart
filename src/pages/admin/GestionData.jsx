@@ -167,6 +167,7 @@ const GestionData = ({ sidebar }) => {
     }
   };
 
+
     //Aqui se guardan los creadores unicos al ejecutar el fetch de arriba
   React.useEffect(() => {
     const getCreators = async () => {
@@ -199,7 +200,7 @@ const GestionData = ({ sidebar }) => {
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
         setMeters(initialMeters["results"]);
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-        setMetersLength(initialMeters["count"]);
+        //setMetersLength(initialMeters["count"]);
       } catch (error) {
         // En caso de error en el llamado a la API se ejecuta un console.error
         if (error.response) {
@@ -215,6 +216,36 @@ const GestionData = ({ sidebar }) => {
       } finally {
         //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
         setIsLoading(false);
+      }
+    };
+    fetchData();
+    //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
+  }, [page, rowsPerPage, sortDescriptor, statusSelection , statusFilter, date]);
+
+  //Esta consulta se ejecuta y usa los parametros de consulta
+  React.useMemo(() => {
+    //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
+    const fetchData = async () => {
+      
+      try {
+        //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
+        const count_online = await apiService.getCountOnlineGateways();
+        console.log("Consulta gateways", count_online)
+        //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
+        //usamos el componente "count" de la consulta para establecer el tamaño de los registros
+        setMetersLength(count_online["online_count"]);
+      } catch (error) {
+        // En caso de error en el llamado a la API se ejecuta un console.error
+        if (error.response) {
+          // La respuesta del servidor tiene un error (código 4xx o 5xx)
+          console.error('Error response:', error.response.data);
+        } else if (error.request) {
+          // No se recibió respuesta del servidor
+          console.error('Error request:', error.request);
+        } else {
+          // Otro tipo de error
+          console.error('Error:', error.message);
+        }
       }
     };
     fetchData();
