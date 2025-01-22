@@ -26,6 +26,7 @@ const TableComponent = (
     {
         setSelectedGateway,
         bottomContent,
+        topContent,
         sortDescriptor,
         setSortDescriptor,
         headerColumns,
@@ -41,11 +42,11 @@ const TableComponent = (
     const classNames = React.useMemo(
         () => ({
           wrapper: ["w-full", "flex justify-center items-center"],
-          table:["h-full w-full mt-5 mx-2"],
-          th: ["bg-oi-bg py-2 h-full", "text-default-500", "", "border-divider","text-center"],
+          table:["h-full w-full mt-5 mx-2 text-center"],
+          th: ["bg-oi-bg", "text-default-500", "", "border-divider","text-center"],
           td: [ 
             //Agregar las celdas en la mitad del componente
-            "align-middle text-center px-1",
+            "align-middle text-center px-1 h-auto",
             // changing the rows border radius
             // first
             "group-data-[first=true]:first:before:rounded-none",
@@ -55,7 +56,7 @@ const TableComponent = (
             // last
             "group-data-[last=true]:first:before:rounded-none",
             "group-data-[last=true]:last:before:rounded-none",
-          ]
+          ],
         }),
         [],
       );
@@ -203,7 +204,7 @@ const TableComponent = (
             setSelectedGateway(Selection)
           }}
           removeWrapper
-          //topContent={topContent}
+          topContent={topContent}
           aria-label="Example table with custom cells, pagination and sorting"
           bottomContent={bottomContent}
           bottomContentPlacement="outside"
@@ -228,7 +229,7 @@ const TableComponent = (
                 className="text-center"
                 width="flex"
               >
-                {column.name}
+                <span className='text-center'>{column.name}</span>
               </TableColumn>
             )}
           </TableHeader>

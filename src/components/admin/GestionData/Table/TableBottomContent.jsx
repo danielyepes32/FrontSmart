@@ -7,7 +7,7 @@ const BottomContent = ({
   pages,
 }) => {
   return (
-    <div className="flex h-full w-full place-items-center items-center justify-center">
+    <div className="flex w-full place-items-center items-center justify-center h-[10vh]">
       <Pagination
         classNames={{
           wrapper:"mx-1 h-full",

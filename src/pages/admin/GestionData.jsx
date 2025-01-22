@@ -17,6 +17,7 @@ import TableComponent from '../../components/admin/GestionData/Table/Table';
 import MapContainer from '../../components/admin/GestionData/MapContainer';
 import CardGateway from '../../components/admin/GestionData/CardGateway';
 import CardGatewayHistory from '../../components/admin/GestionData/CardGatewayHistory';
+import TableTopContent from '../../components/admin/GestionData/Table/TableTopContent';
 
 
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
@@ -34,6 +35,8 @@ const GestionData = ({ sidebar }) => {
   const [gatewayPost, setGatewayPost] = React.useState(null)
   //latitude del nuevo gateway a registrar
   const [latitudeGatewayPost, setLatitudeGatewayPost] = React.useState(null)
+
+  const [countOnlineGateways, setCountOnlineGateways] = React.useState(0)
   //longitude del nuevo gateway a registrar
   const [longitudeGatewayPost, setLongitudeGatewayPost] = React.useState(null)
   //------------------------------------------------------------------------------------------------------------
@@ -115,7 +118,7 @@ const GestionData = ({ sidebar }) => {
     const latitude = latitudeGatewayPost;
     const longitude = longitudeGatewayPost;
 
-    console.log("Base seleccionada: ", selectedKeys.anchorKey)
+    //console.log("Base seleccionada: ", selectedKeys.anchorKey)
 
     const newGatewayData = {
       gateway_id : gateway_id.toUpperCase(),
@@ -125,7 +128,7 @@ const GestionData = ({ sidebar }) => {
       service_center: selectedKeys.anchorKey ? selectedKeys.anchorKey : selectedKeys
     };
 
-    console.log("Datos del nuevo gateway: ",newGatewayData)
+    //console.log("Datos del nuevo gateway: ",newGatewayData)
     try {
       const newGateway = await apiService.postGateways(newGatewayData);
       console.log('Nueva incidencia creada:', newGateway);
@@ -167,21 +170,36 @@ const GestionData = ({ sidebar }) => {
     }
   };
 
+  React.useMemo(()=> {
+    setPage(1)
+  }, [statusSelection])
+
 
     //Aqui se guardan los creadores unicos al ejecutar el fetch de arriba
-  React.useEffect(() => {
+  React.useMemo(() => {
     const getCreators = async () => {
       const creators = await fetchUniqueCreators();
       setFormattedCreators(creators);
     };
     getCreators();
-  }, [isOpen===true]);
+  }, [isOpen,]);
 
   //Esta consulta se ejecuta y usa los parametros de consulta
   React.useEffect(() => {
     setIsLoading(true)
 
-    console.log("SortDescriptyor: ", sortDescriptor)
+      //Inicializar la variable fuera del bloque condicional
+      let creatorString = '';
+      //En caso que no todos los creadores estén activos ejecutamos el filtro de creador
+      //&statusFilter es un set, no un JSON
+      if (statusSelection !== 'all'){
+        //Creamos un arreglo con el set de Datos
+        const creatorsArray = Array.from(statusSelection);
+
+        // Unir los elementos del Array en una cadena separada por comas
+        creatorString = creatorsArray.join(',');
+        //console.log(creatorString)
+      } 
     const params= {
         page,
         page_size : rowsPerPage,
@@ -189,18 +207,22 @@ const GestionData = ({ sidebar }) => {
         ordering: sortDescriptor ? sortDescriptor.direction === 'ascending' ? sortDescriptor.column : `-${sortDescriptor.column}` : null,
     }
 
-    console.log(params)
+    // Agregar `service_center` si statusSelection no es 'all'
+    if (statusSelection !== 'all') {
+      params.service_center = creatorString;
+    }
+
     //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
     const fetchData = async () => {
       
       try {
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
         const initialMeters = await apiService.getGatewaysMysql(params);
-        console.log("Consulta gateways", initialMeters)
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
         setMeters(initialMeters["results"]);
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-        //setMetersLength(initialMeters["count"]);
+        setMetersLength(initialMeters["count"]);
+
       } catch (error) {
         // En caso de error en el llamado a la API se ejecuta un console.error
         if (error.response) {
@@ -230,10 +252,9 @@ const GestionData = ({ sidebar }) => {
       try {
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
         const count_online = await apiService.getCountOnlineGateways();
-        console.log("Consulta gateways", count_online)
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-        setMetersLength(count_online["online_count"]);
+        setCountOnlineGateways(count_online["online_count"]);
       } catch (error) {
         // En caso de error en el llamado a la API se ejecuta un console.error
         if (error.response) {
@@ -254,12 +275,32 @@ const GestionData = ({ sidebar }) => {
 
   //Esta consulta se ejecuta y usa los parametros de consulta
   React.useEffect(() => {
+
+    //Inicializar la variable fuera del bloque condicional
+    let creatorString = '';
+    //En caso que no todos los creadores estén activos ejecutamos el filtro de creador
+    //&statusFilter es un set, no un JSON
+    if (statusSelection !== 'all'){
+      //Creamos un arreglo con el set de Datos
+      const creatorsArray = Array.from(statusSelection);
+
+      // Unir los elementos del Array en una cadena separada por comas
+      creatorString = creatorsArray.join(',');
+      //console.log(creatorString)
+    } 
+    const params= {}
+
+    // Agregar `service_center` si statusSelection no es 'all'
+    if (statusSelection !== 'all') {
+      params.service_center = creatorString;
+    }
     //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
     const fetchData = async () => {
       
       try {
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
-        const gateways = await apiService.getGatewaysMysql();
+        const gateways = await apiService.getGatewaysMysql(params);
+        console.log("Gateways",params)
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
         setArrayGateways(gateways["results"]);
       } catch (error) {
@@ -278,7 +319,7 @@ const GestionData = ({ sidebar }) => {
     };
     fetchData();
     //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
-  }, []);
+  }, [statusSelection]);
 
   // Función para extraer parámetros de la URL
   const extractParamsFromUrl = (url) => {
@@ -356,7 +397,18 @@ const GestionData = ({ sidebar }) => {
         pages={pages}
       />
     );
-  }, [metersLength, page, pages]);
+  }, [metersLength, page, pages, metersFetch]);
+
+  {/*Seccion para el pasa paginas*/}
+  const topContent = React.useMemo(() => {
+    return (
+      <TableTopContent
+        statusFilter={statusSelection}
+        setStatusFilter={setStatusSelection}
+        statusOptions={statusCreators}
+      />
+    );
+  }, [statusCreators, statusSelection]);
 
   {/*Seccion para el pasa paginas*/}
   const scatterPlot = React.useMemo(() => {
@@ -375,6 +427,7 @@ const GestionData = ({ sidebar }) => {
         sortDescriptor = {sortDescriptor}
         setSortDescriptor = {setSortDescriptor}
         headerColumns = {headerColumns}
+        topContent={topContent}
         metersFetch = {metersFetch}
         isLoading = {isLoading}
         loadingState = {loadingState}
@@ -388,7 +441,6 @@ const GestionData = ({ sidebar }) => {
   const [selectedKeys, setSelectedKeys] = React.useState("SEDAPAL COMAS");
 
   const CustomModal = React.useMemo(() => {
-    console.log("CustomMessage: ", isOpenCustomMessage)
     return isOpenCustomMessage === true ? (
       <CustonModal selectedGateway={selectedMeter} isVisible={isOpenCustomMessage} setIsVisible={setIsOpenCustomMessage}></CustonModal>
     ) : null
@@ -429,6 +481,19 @@ const GestionData = ({ sidebar }) => {
     )
   },[isVisible])
 
+  const mapContainerMemo = React.useMemo(() => {
+    console.log("Cambio gateways Data", arrayGateways)
+    return(
+      <>
+      <MapContainer
+        loadingApi={loadingApi}
+        arrayGateways={arrayGateways}
+        arrayMeters={arrayMeters}
+      />
+      </>
+    )
+  },[loadingApi, arrayGateways, arrayMeters])
+
   return (
     <div className={`p-4 bg-gray-200 flex h-screen flex-col col-span-6 overflow-auto`}>
       <div className=''>
@@ -442,18 +507,14 @@ const GestionData = ({ sidebar }) => {
       </div>
       <div className='h-full w-full flex bg-gray-200 grid grid-cols-5 gap-4'>
         {/* Cuadrícula 4x2: 8 elementos */}
-        <MapContainer
-          loadingApi={loadingApi}
-          arrayGateways={arrayGateways}
-          arrayMeters={arrayMeters}
-        />    
+        {mapContainerMemo}   
         <div className='w-full h-full flex flex-col col-span-3'>
           {/*Separación */}
           <div className='h-1/2 w-full flex bg-gray-200 grid lg:grid-cols-2 mb-5'>
             <div className='bg-white h-full rounded-[20px] flex flex-col mr-5'>
               <CardGateway
                 onOpen={onOpen}
-                metersLength={metersLength}
+                metersLength={countOnlineGateways}
               />
             </div>
             <div className='w-full h-full flex flex-col bg-white rounded-[20px]'>
