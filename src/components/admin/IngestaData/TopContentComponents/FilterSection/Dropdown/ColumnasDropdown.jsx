@@ -10,7 +10,7 @@ const ColumnasDropdown = ({ selectedKeys, onSelectionChange, options }) => (
           variant="bordered"
           className="Capitalize"
         >
-          Columnas
+          Filtros
         </Button>
       </DropdownTrigger>
       <DropdownMenu

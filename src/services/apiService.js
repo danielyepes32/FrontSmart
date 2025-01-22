@@ -18,7 +18,7 @@ const getAll = async (params) => {
 export const getGatewayData = async (endPoint, params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(`${baseUrl}${endPoint}/?${queryString}`, {
+    const response = await axios.get(`${baseUrl}meters/${endPoint}/?${queryString}`, {
       signal: signal || undefined, // Pasar la señal de aborto
     });
     return response.data;
@@ -36,7 +36,7 @@ export const getGatewayData = async (endPoint, params, signal) => {
 
 export const getConteoIncidencias = async (params) => { 
   try { const queryString = new URLSearchParams(params).toString(); 
-    const response = await axios.get(`${baseUrl}conteo-incidencias/?${queryString}`); 
+    const response = await axios.get(`${baseUrl}incidencias/conteo-incidencias/?${queryString}`); 
     console.log(response.data); return response.data; 
   } catch (error) { 
     console.error('Error fetching conteo de incidencias:', error); 
@@ -47,7 +47,7 @@ export const getConteoIncidencias = async (params) => {
 // Servicio para descargar la plantilla
 export const downloadTemplate = async () => {
   try {
-    const response = await axios.get(`${baseUrl}download-template/`, {
+    const response = await axios.get(`${baseUrl}files/download-template/`, {
       responseType: 'blob', // Asegurar que el tipo de respuesta sea un blob
     });
 
@@ -166,7 +166,7 @@ export const postTriggerIncidencia = async (data) => {
 const autocompleteMeters = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`autocomplete/?format=json&${queryString}`,{
+    const response = await axios.get(baseUrl+`meters/autocomplete/?format=json&${queryString}`,{
       signal: signal || undefined
     });
     console.log(response.data);
@@ -188,7 +188,7 @@ const autocompleteMeters = async (params, signal) => {
 const autocompleteGateway = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`autocomplete-gateway/?format=json&${queryString}`,{
+    const response = await axios.get(baseUrl+`gateways/autocomplete-gateway/?format=json&${queryString}`,{
       signal: signal || undefined, // Pasar la señal de aborto
     });
     return response.data;
@@ -208,7 +208,7 @@ const autocompleteGateway = async (params, signal) => {
 const autocompleteAlarms = async (params) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`autocomplete-alarma/?format=json&${queryString}`);
+    const response = await axios.get(baseUrl+`alarms/autocomplete-alarma/?format=json&${queryString}`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -298,7 +298,7 @@ const getGateways = async (params) => {
 const getGatewaysMysql = async (params) => {
   try {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`gateways_mysql/?format=json&${queryString}`);
+    const response = await axios.get(baseUrl+`gateways/gateways_mysql/?format=json&${queryString}`);
     console.log(response.data);
     return response.data;
   } catch (error) {

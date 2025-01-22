@@ -11,7 +11,7 @@ const StatusDropdown = ({ selectedKeys, onSelectionChange, options }) => (
         variant="bordered"
         className="Capitalize"
       >
-        Status
+        Estado del medidor
       </Button>
     </DropdownTrigger>
     <DropdownMenu

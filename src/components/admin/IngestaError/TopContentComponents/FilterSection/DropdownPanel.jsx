@@ -31,7 +31,7 @@ const DropdownPanel = ({
             variant="bordered"
             className="Capitalize"
           >
-            Falla
+            Tipo de Alerta
           </Button>
         </DropdownTrigger>
         <DropdownMenu
@@ -88,7 +88,7 @@ const DropdownPanel = ({
             variant="bordered"
             className="Capitalize"
           >
-            Tipo de Falla
+            Grupo de Alerta
           </Button>
         </DropdownTrigger>
         <DropdownMenu
@@ -133,7 +133,7 @@ const DropdownPanel = ({
             variant="bordered"
             className="Capitalize w-auto"
           >
-            Columnas
+            Filtro
           </Button>
         </DropdownTrigger>
         <DropdownMenu

@@ -87,7 +87,7 @@ const FileUpload = () => {
 
             try {
                 // Realizar la petición POST al backend con el seguimiento del progreso de la subida
-                const response = await axios.post('http://3.135.197.152:8000/api/v1/upload/', formData, {
+                const response = await axios.post('http://3.135.197.152:8000/api/v1/files/upload/', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -102,6 +102,8 @@ const FileUpload = () => {
 
             } catch (error) {
                 setIsVisible(true)  
+                // El servidor respondió con un código de error
+                console.error("Response data:", error.response.data);
                 setMessageFetch('Archivo rechazado por el servidor');
             }
         };

@@ -11,7 +11,7 @@ const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => (
           variant="bordered"
           className="Capitalize"
         >
-          Creadores
+          Usuarios
         </Button>
       </DropdownTrigger>
       <DropdownMenu
