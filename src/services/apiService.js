@@ -1,31 +1,32 @@
 import axios from 'axios';
-const baseUrl = 'http://3.135.197.152:8000/api/v1/'; //3.135.197.152
+import {refresh_token} from './loginService';
+const baseUrl = 'http://localhost:8000/api/v1/'; //3.135.197.152
 
-//servicio para hacerle get a los valores de los medidores
-const getAll = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`meters?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
+const withRetry = (fn) => {
+  return async (...args) => {
+    try {
+      return await fn(...args);
+    } catch (error) {
+      return refresh_token(error, fn);
+    }
+  };
 };
 
 //servicio para hacerle get a los valores de los medidores
-const getCountOnlineGateways = async (params) => {
-  try {
+const getAll = withRetry(async (params) => {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`gateways/count_gateways_online/?format=json&${queryString}`);
+    const response = await axios.get(baseUrl+`meters?format=json&${queryString}`, {withCredentials: true});
     console.log(response.data);
     return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+});
+
+//servicio para hacerle get a los valores de los medidores
+const getCountOnlineGateways = withRetry(async (params) => {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await axios.get(baseUrl+`gateways/count_gateways_online/?format=json&${queryString}`, {withCredentials: true});
+    console.log(response.data);
+    return response.data;
+});
 
 // Servicio para obtener datos del gateway
 export const getGatewayData = async (endPoint, params, signal) => {
@@ -33,6 +34,7 @@ export const getGatewayData = async (endPoint, params, signal) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(`${baseUrl}meters/${endPoint}/?${queryString}`, {
       signal: signal || undefined, // Pasar la señal de aborto
+      withCredentials: true,
     });
     return response.data;
   } catch (error) {
@@ -42,145 +44,106 @@ export const getGatewayData = async (endPoint, params, signal) => {
       console.error('Error fetching gateway data:', error);
     }
     if (!axios.isCancel(error)) {
-      throw error;
+      return refresh_token(error, getGatewayData);
     }
   }
 };
 
-export const getConteoIncidencias = async (params) => { 
-  try { const queryString = new URLSearchParams(params).toString(); 
-    const response = await axios.get(`${baseUrl}incidencias/conteo-incidencias/?${queryString}`); 
-    console.log(response.data); return response.data; 
-  } catch (error) { 
-    console.error('Error fetching conteo de incidencias:', error); 
-    throw error; 
-  } 
-};
+export const getConteoIncidencias = withRetry(async (params) => { 
+    const queryString = new URLSearchParams(params).toString(); 
+    const response = await axios.get(`${baseUrl}incidencias/conteo-incidencias/?${queryString}`, {withCredentials: true}); 
+    console.log(response.data); 
+    return response.data;
+});
 
 // Servicio para descargar la plantilla
-export const downloadTemplate = async () => {
-  try {
-    const response = await axios.get(`${baseUrl}files/download-template/`, {
-      responseType: 'blob', // Asegurar que el tipo de respuesta sea un blob
-    });
+export const downloadTemplate = withRetry(async () => {
+  const response = await axios.get(`${baseUrl}files/download-template/`, {
+    responseType: 'blob', // Asegurar que el tipo de respuesta sea un blob
+  },
+  {
+    withCredentials: true
+  });
 
-    return response.data; // Retorna el blob del archivo
-  } catch (error) {
-    console.error('Error downloading template:', error);
-    throw error;
-  }
-};
+  return response.data; // Retorna el blob del archivo
+});
 
 // Servicio para crear una nueva incidencia
-export const getIncidencia = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`incidencias?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+export const getIncidencia = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`incidencias?format=json&${queryString}`, {withCredentials: true});
+  console.log(response.data);
+  return response.data;
+});
 
 //servicio para hacerle get a los valores de los medidores
-const getAllAlarms = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`alarms?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching alarms:', error);
-    throw error;
-  }
-};
+const getAllAlarms = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`alarms?format=json&${queryString}`, {withCredentials: true});
+  console.log(response.data);
+  return response.data;
+});
 
 //servicio para hacerle get a los valores de los medidores
-const getAllCombined = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`vista-combinada?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching alarms:', error);
-    throw error;
-  }
-};
+const getAllCombined = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`vista-combinada?format=json&${queryString}`, {withCredentials: true});
+  console.log(response.data);
+  return response.data;
+});
 
 //servicio para hacerle get a los valores de los medidores
-const getCreator = async () => {
-    try {
-      const response = await axios.get(baseUrl+'unique-creators/?format=json');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
-    }
-  };
+const getCreator = withRetry(async () => {
+
+  const response = await axios.get(baseUrl+'unique-creators/?format=json', {withCredentials: true});
+  return response.data;
+});
 
 //servicio para hacerle get a los valores de los medidores
-const getFallaType = async () => {
-  try {
-    const response = await axios.get(baseUrl+'unique-falla-type/?format=json');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const getFallaType = withRetry(async () => {
+
+  const response = await axios.get(baseUrl+'unique-falla-type/?format=json', {withCredentials: true});
+  return response.data;
+});
 
 //servicio para hacerle get a los valores de los medidores
-const getFallaDesc = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`unique-fallaDesc/?format=json&${queryString}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const getFallaDesc = withRetry(async (params) => {
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`unique-fallaDesc/?format=json&${queryString}`, {withCredentials: true});
+  return response.data;
+});
 
 //servicio para hacerle get a los valores de los medidores
-const getStatus = async () => {
-  try {
-    const response = await axios.get(baseUrl+'unique-status/?format=json');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const getStatus = withRetry(async () => {
+  const response = await axios.get(baseUrl+'unique-status/?format=json', {withCredentials: true});
+  return response.data;
+});
 
 //servicio para hacerle post a un nuevo trigger del pipeline principal
-export const postTrigger = async (data) => {
-    try {
-      const response = await axios.post(baseUrl+'dags/STG4_MEDIDORES/dagRuns', data);
-      return response.data;
-    } catch (error) {
-      throw error.response ? error.response.data : 'Network Error';
-    }
-};
+export const postTrigger = withRetry(async (data) => {
+
+  const response = await axios.post(baseUrl+'dags/STG4_MEDIDORES/dagRuns', data, {withCredentials: true});
+  return response.data;
+
+});
 
 //servicio para hacerle post a un nuevo trigger del pipeline principal
-export const postTriggerIncidencia = async (data) => {
-  try {
-    const response = await axios.post(baseUrl+'dags/WF_INCIDENCIAS/dagRuns', data);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : 'Network Error';
-  }
-};
+export const postTriggerIncidencia = withRetry(async (data) => {
+
+  const response = await axios.post(baseUrl+'dags/WF_INCIDENCIAS/dagRuns', data, {withCredentials: true});
+  return response.data;
+});
 
 //Servicio para generar el autocomplete
 const autocompleteMeters = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`meters/autocomplete/?format=json&${queryString}`,{
-      signal: signal || undefined
+      signal: signal || undefined,
+      withCredentials: true
     });
     console.log(response.data);
     return response.data;
@@ -191,7 +154,7 @@ const autocompleteMeters = async (params, signal) => {
       console.error('Error fetching gateway data:', error);
     }
     if (!axios.isCancel(error)) {
-      throw error;
+      return refresh_token(error, autocompleteMeters);
     }
   }
 };
@@ -203,6 +166,7 @@ const autocompleteGateway = async (params, signal) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`gateways/autocomplete-gateway/?format=json&${queryString}`,{
       signal: signal || undefined, // Pasar la señal de aborto
+      withCredentials: true
     });
     return response.data;
   } catch (error) {
@@ -212,7 +176,7 @@ const autocompleteGateway = async (params, signal) => {
       console.error('Error fetching gateway data:', error);
     }
     if (!axios.isCancel(error)) {
-      throw error;
+      return refresh_token(error, autocompleteGateway);
     }
   }
 };
@@ -223,6 +187,7 @@ const autocompleteGatewayMysql = async (params, signal) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`gateways/autocomplete-gateway-mysql/?format=json&${queryString}`,{
       signal: signal || undefined, // Pasar la señal de aborto
+      withCredentials: true
     });
     return response.data;
   } catch (error) {
@@ -232,30 +197,27 @@ const autocompleteGatewayMysql = async (params, signal) => {
       console.error('Error fetching gateway data:', error);
     }
     if (!axios.isCancel(error)) {
-      throw error;
+      return refresh_token(error, autocompleteGatewayMysql);
     }
   }
 };
 
 //Servicio para generar el autocomplete de las alarmas
-const autocompleteAlarms = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`alarms/autocomplete-alarma/?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const autocompleteAlarms = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`alarms/autocomplete-alarma/?format=json&${queryString}`);
+  console.log(response.data);
+  return response.data;
+});
 
 //Servicio para generar el autocomplete de las alarmas
 const autocompleteCombined = async (params, signal) => {
   try {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`autocomplete-combinada/?format=json&${queryString}`,{
-      signal: signal || undefined
+      signal: signal || undefined,
+      withCredentials: true
     });
     console.log(response.data);
     return response.data;
@@ -266,97 +228,84 @@ const autocompleteCombined = async (params, signal) => {
       console.error('Error fetching gateway data:', error);
     }
     if (!axios.isCancel(error)) {
-      throw error;
+      return refresh_token(error, autocompleteCombined);
     }
   }
 };
 
 //Servicio para generar las tapas Unicas
-const getTapas = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`unique-tapaDesc/?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const getTapas = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`unique-tapaDesc/?format=json&${queryString}`, {withCredentials: true});
+  console.log(response.data);
+  return response.data;
+});
 
 //Servicio para actualizar los valores de un medidor
-export const updateMeter = async (meterId, updates) => {
-  try {
-    const response = await axios.patch(`${baseUrl}meters/${meterId}/`, updates, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error updating meter:', error);
-    throw error.response ? error.response : 'Network Error';
-  }
-};
+export const updateMeter = withRetry(async (meterId, updates) => {
+
+  const response = await axios.patch(`${baseUrl}meters/${meterId}/`, updates, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials:true
+  });
+  return response.data;
+});
 
 // Servicio para crear una nueva incidencia
-export const postIncidencia = async (data) => {
-  try {
-    const response = await axios.post(`${baseUrl}incidencias/`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error creating incidencia:', error);
-    throw error.response ? error.response.data : 'Network Error';
-  }
-};
+export const postIncidencia = withRetry(async (data) => {
+
+  const response = await axios.post(`${baseUrl}incidencias/`, data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: true
+  });
+  return response.data;
+});
 
 //Servicio para generar las tapas Unicas
-const getGateways = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`gateways/?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const getGateways = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`gateways/?format=json&${queryString}`,{withCredentials: true});
+  console.log(response.data);
+  return response.data;
+});
 
 //Servicio para generar las tapas Unicas
-const getGatewaysMysql = async (params) => {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`gateways/gateways_mysql/?format=json&${queryString}`);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
-  }
-};
+const getGatewaysMysql = withRetry(async (params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`gateways/gateways_mysql/?format=json&${queryString}`,{withCredentials:true});
+  console.log(response.data);
+  return response.data;
+});
 
 // Servicio para crear una nueva incidencia
-export const postGateways = async (data) => {
-  try {
-    const response = await axios.post(`${baseUrl}gateways/`, data, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error creating incidencia:', error);
-    throw error.response ? error.response.data : 'Network Error';
-  }
-};
+export const postGateways = withRetry(async (data) => {
+
+  const response = await axios.post(`${baseUrl}gateways/`, data, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    withCredentials: true
+  });
+  return response.data;
+});
+
+const getGatewayLogs = withRetry(async (equipId, params) => {
+
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`gateways/logs/${equipId}/?format=json&${queryString}`, {withCredentials:true});
+  return response.data;
+});
 
 
 export default {
+  getGatewayLogs,
   postTriggerIncidencia, 
   getAll, 
   postTrigger, 

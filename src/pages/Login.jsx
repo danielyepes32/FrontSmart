@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useForm } from "../hook/useForm"
+import { login } from '../services/loginService';
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -17,15 +18,24 @@ function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Aquí deberías hacer una llamada al servidor para verificar las credenciales
-        // Para el ejemplo, usaremos credenciales de prueba:
-        if (username === 'user@example.com' && contra === 'password123') {
-            setIsAuthenticated(true);
-            localStorage.setItem('isAuthenticated', 'true');
-            navigate('/admin/'); // Redirigir al usuario a la página /admin
-        } else {
-            alert('Credenciales inválidas');
-        }
+    
+        // Llamar a la función login pasando el username y password
+        login(username, contra)
+            .then((data) => {
+                // Verificar si la respuesta es exitosa
+                if (data.success === true) {
+                    setIsAuthenticated(true);
+                    localStorage.setItem('isAuthenticated', 'true');
+                    navigate('/admin/'); // Redirigir a la página /admin
+                } else {
+                    alert('Credenciales inválidas');
+                }
+            })
+            .catch((error) => {
+                // En caso de error, mostramos un mensaje
+                alert('Error de autenticación, por favor verifica las credenciales.');
+                console.error('Login error:', error);
+            });
     };
 
     return (

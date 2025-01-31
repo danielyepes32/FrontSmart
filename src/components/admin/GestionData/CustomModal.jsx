@@ -101,10 +101,13 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
     setIsLoading(true)
     const fetchData = async () => {
       try {
+        const params = {
+          page: page,
+          page_size: rowsPerPage
+        }
         // Consultar la API para obtener los datos de los últimos 24 horas
-        console.log("Data consulta: ", selectedGateway.equip_id)
-        const response = await axios.get(`http://3.135.197.152:8000/api/v1/gateways/logs/${selectedGateway.equip_id}/?page=${page}&page_size=${rowsPerPage}`);
-        const data = response.data.results;
+        const response = await apiService.getGatewayLogs(selectedGateway.equip_id, params);
+        const data = response.results;
         console.log("Data del fetch: ", response)
         setMeters(data)
         setMetersLength(response.data.count)

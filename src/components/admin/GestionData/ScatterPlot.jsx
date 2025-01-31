@@ -3,6 +3,7 @@ import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale
 import { Line } from 'react-chartjs-2';
 import axios from 'axios';
 import { DateTime } from 'luxon'; // Importar Luxon
+import apiService from '../../../services/apiService';
 
 // Registro de los componentes de Chart.js necesarios
 ChartJS.register(
@@ -26,10 +27,8 @@ const ScatterPlot = ({selectedGateway}) => {
     const fetchData = async () => {
       try {
         // Obtener datos de la API
-        const response = await axios.get(
-          `http://3.135.197.152:8000/api/v1/gateways/logs/${selectedGateway.anchorKey}/`
-        );
-        const data = response.data.results;
+        const response = await apiService.getGatewayLogs(selectedGateway.equip_id);
+        const data = response.results;
   
         // Hora actual y hace 24 horas
         const now = DateTime.now().setZone("America/Lima");
