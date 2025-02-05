@@ -268,20 +268,15 @@ export default function TableTopContent({
       {/*Contenedor de los datos de filtrado*/}
       <div className="flex justify-between items-end">
         {Modal} {/*El Modal solo se reenderiza en las condiciones del useMemo()*/}
-        <div className="flex overflow-y-hidden flex-col md:flex-row md:justify-start sm:justify-start sm:flex-row items-end w-full justify-end sm:space-x-2 sm:space-y-0">
+        <div className="flex h-full overflow-y-hidden flex-col md:flex-row md:justify-start sm:justify-start sm:flex-row items-end w-full justify-end sm:space-x-2 sm:space-y-0">
           {/*Aquí se configura el autocomplete*/}
+          <div className='w-full h-full flex justify-start place-items-center'>
+            <span className='text-left font-bold justify-center place-content-center'>
+              Plataforma de monitoreo y gestión de usuarios 
+            </span>
+          </div>
           <DropdownPanel
-            statusSelection={statusSelection}
-            setStatusSelection={setStatusSelection}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            visibleColumns={visibleColumns}
-            setVisibleColumns={setVisibleColumns}
             onOpen={onOpen}
-            firstColumn={firstColumn}
-            secondColumn={secondColumn}
-            statusOptions={statusOptions}
-            columns={columns}
           />
         </div>
       </div>

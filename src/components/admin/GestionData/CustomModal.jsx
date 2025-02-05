@@ -86,11 +86,9 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
     const [messageFetch, setMessageFetch] = React.useState("");
 
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-  console.log("Visible: ",isVisible)
 
   React.useEffect(() => {
     if(isVisible === true){
-      console.log("entra 1")
       onOpen()
     }else if (isVisible === false){
       null
@@ -108,9 +106,8 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
         // Consultar la API para obtener los datos de los últimos 24 horas
         const response = await apiService.getGatewayLogs(selectedGateway.equip_id, params);
         const data = response.results;
-        console.log("Data del fetch: ", response)
         setMeters(data)
-        setMetersLength(response.data.count)
+        setMetersLength(response.count)
       } catch (error) {
         console.error('Error al obtener los datos:', error);
       }
@@ -141,7 +138,6 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
             //Funcion callback al obtener datos para la tabla dependiendo del columkey
         const renderCell = React.useCallback((user, columnKey) => {
           const cellValue = user[columnKey];
-          console.log("Entra aquí: ", user)
           //Realizar diferentes acciones dependiendo de la columkey
           switch (columnKey) {
             case "status_time":
@@ -325,13 +321,9 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
       placement="center"
       onOpenChange={()=>{
         onOpenChange()
-        console.log("isOpen: ", isVisible)
       }}
       onClose={()=>{
-        console.log("Visible: " , isVisible)
         setIsVisible(false)
-        console.log("Se cerró")
-        console.log("Visible: " , isVisible)
       }}
       className="mx-5 w-auto"
       scrollBehavior='outside'

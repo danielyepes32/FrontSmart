@@ -12,10 +12,10 @@ const columns = [
 ];
 
 const userColumns = [
-  {name: "CODIGO DE USUARIO", uid: "username", sortable: true},
-  {name: "CORREO", uid: "email", sortable: true},
-  {name: "SUPERUSUARIO", uid: "is_superuser", sortable: true},
-  {name: "FECHA CREACION", uid: "date_joined", sortable: true},
+  {name: "CODIGO DE USUARIO", uid: "owner_username", sortable: true},
+  {name: "CORREO", uid: "owner_email", sortable: true},
+  {name: "SUPERUSUARIO", uid: "owner_isSuperuser", sortable: true},
+  {name: "FECHA CREACION", uid: "owner_dateJoined", sortable: true},
   {name: "ACCION", uid : "actions", sortable: true},
 ];
 
@@ -60,4 +60,4 @@ const columsGatewayLogs = [
   {name: "ESTATUS", uid : "online_status", sortable: true}
 ];
 
-export {columns, statusOptions, columnsAlarms, columnsStatus, columnsGateways, columsGatewayLogs};
+export {columns, userColumns, statusOptions, columnsAlarms, columnsStatus, columnsGateways, columsGatewayLogs};

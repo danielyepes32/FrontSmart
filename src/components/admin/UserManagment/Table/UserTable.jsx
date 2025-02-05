@@ -111,14 +111,13 @@ const UserTable = ({
         
         {!isLoading ? (item) => (
           <TableRow 
-            key={item.id}
+            key={item.username}
             className="py-2"
             >
             {(columnKey) => 
             <TableCell
                 className="selected-text"
                 onMouseDown={(e) => e.stopPropagation()} 
-                onPointerDown={(e) => e.stopPropagation()} 
                 >
                 {renderCell(item, columnKey, setActionKey, setSelectedMeter, onOpen) === null 
                 ? 'NO DATA' : renderCell(item, columnKey, setActionKey, setSelectedMeter, onOpen)}

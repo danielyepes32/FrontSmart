@@ -106,7 +106,10 @@ const CustomTable = ({
             key={item.id}
             >
             {(columnKey) => 
-            <TableCell>
+            <TableCell
+              className="selected-text"
+              onMouseDown={(e) => e.stopPropagation()} 
+            >
                 {renderCell(item, columnKey, setActionKey, setSelectedMeter, onOpen) === null 
                 ? 'NO DATA' : renderCell(item, columnKey, setActionKey, setSelectedMeter, onOpen)}
             </TableCell>}

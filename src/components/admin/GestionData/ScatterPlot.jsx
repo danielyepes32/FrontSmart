@@ -26,8 +26,9 @@ const ScatterPlot = ({selectedGateway}) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener datos de la API
-        const response = await apiService.getGatewayLogs(selectedGateway.equip_id);
+        // Obtener datos de la 
+        console.log("SelectedGateway: ", selectedGateway.anchorKey)
+        const response = await apiService.getGatewayLogs(selectedGateway.anchorKey);
         const data = response.results;
   
         // Hora actual y hace 24 horas
@@ -38,6 +39,9 @@ const ScatterPlot = ({selectedGateway}) => {
         const labels = Array.from({ length: 24 }, (_, i) =>
           twentyFourHoursAgo.plus({ hours: i }).toFormat("yyyy-MM-dd HH:00")
         );
+
+        console.log("labels: ", labels)
+        console.log("Datos: ", data)
   
         // Filtrar datos recientes
         const recentData = data.filter((log) => {

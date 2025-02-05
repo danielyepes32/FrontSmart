@@ -4,7 +4,7 @@ import { useState } from "react";
 import React from "react";
 //Libreria usada para establecer el maneja de ventanas emergentes modal
 import {useDisclosure} from "@nextui-org/react";
-import {columnsAlarms} from "../../utils/tests/data"  //"../../utils/tests/data";
+import {userColumns} from "../../utils/tests/data"  //"../../utils/tests/data";
 //Componente de Servicio para conexiones con la API
 import apiService from "../../services/apiService";
 //Eventos de cambio de variables constant
@@ -16,10 +16,8 @@ import {parseAbsoluteToLocal} from "@internationalized/date";
 //Importar luxon para poder agregar zona horaria a un dato de tipo Fecha
 import { DateTime } from 'luxon';
 
-
-
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
-const INITIAL_VISIBLE_COLUMNS = ["id", "meter_code", "falla_desc","tipo","fecha", "falla_type","actions"];
+const INITIAL_VISIBLE_COLUMNS = ["owner_username","owner_email","owner_isSuperuser","owner_dateJoined","actions"];
 
 
 const AccountManagement = () => {
@@ -112,25 +110,15 @@ const AccountManagement = () => {
           page,//numero de pagina
           page_size: rowsPerPage,//Tamaño de la consulta en número de registros
           //ordenamiento en caso de haberlo, en caso de haberlo se necesita el nombre de la columna y agregarle un - en caso de ser orden descendente
-          ordering: sortDescriptor.direction === 'ascending' ? sortDescriptor.column : `-${sortDescriptor.column}`,
-          //parametro de creador
-          falla_type : fallaTypeFilter === 'all' ? '' : falla_type_string,
-          //Parametro para el status
-          falla_desc : fallaDescFilter === 'all' ? '' : falla_desc_string,
-          //Parametro establecido en la api, gte se refiere a greater por lo que se agrega de manera concatenada el valor de inicio de la busqueda en el filtro de calendario
-          fecha_gte : `${date.start["year"]}${date.start["month"] < 10 ? `0${date.start["month"]}` : date.start["month"]}${date.start["day"] < 10 ? `0${date.start["day"]}` : date.start["day"]}`,
-          //Parametro establecido en la api, lte se refiere a lower por lo que se agrega de manera concatenada el valor de fin de la busqueda en el filtro de calendario
-          fecha_lte : `${date.end["year"]}${date.end["month"] < 10 ? `0${date.end["month"]}` : date.end["month"]}${date.end["day"] < 10 ? `0${date.end["day"]}` : date.end["day"]}`
-
-        };
+          ordering: sortDescriptor.direction === 'ascending' ? sortDescriptor.column : `-${sortDescriptor.column}`        };
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
-        const initialMeters = await apiService.getAllCombined(params);
+        const initialMeters = await apiService.getAllDescriptions(params);
         
         console.log(initialMeters)
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
-        setMeters(initialMeters["results"]);
+        setMeters(initialMeters['results']);
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-        setMetersLength(initialMeters["count"]);
+        setMetersLength(initialMeters['count']);
       } catch (error) {
         // En caso de error en el llamado a la API se ejecuta un console.error
         if (error.response) {
@@ -311,9 +299,9 @@ const AccountManagement = () => {
   //Esta función se usa para calcular las columnas que se etsablecen como visibles
   const headerColumns = React.useMemo(() => {
 
-    if (visibleColumns === "all") return columnsAlarms;
+    if (visibleColumns === "all") return userColumns;
 
-    return columnsAlarms.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return userColumns.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);//Se ejecuta cada que hay un cambio en la constante vsisibleColumns
 
   
@@ -396,7 +384,7 @@ const AccountManagement = () => {
         statusOptions={fallaType}
         visibleColumns={visibleColumns}
         setVisibleColumns={setVisibleColumns}
-        columns={columnsAlarms}
+        columns={userColumns}
         users={meters}
         haFilterSelect={hasSearchFilter}
         usersLength = {metersLength}

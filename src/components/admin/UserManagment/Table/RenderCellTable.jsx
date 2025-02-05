@@ -145,6 +145,24 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
           </Dropdown>
         </div>
       );
+    case 'owner_isSuperuser':
+      return(
+        //Creo un componente Chip de tipo dot porque estamos agregando un boton de estatus
+        <Chip
+          variant="dot"
+          size="sm"
+          classNames={{
+              //Las caracteristicas de base se cambian con respecto a tailwind para el tamaño del componente chip dentro de su contenedot
+              base: "w-auto h-auto",
+              content: "px-1",
+              //le doy un tamaño al punto, en este caso con un padding de 1 y un color de bg en este caso caracterizado por el mapeo del estatus key
+              dot: `p-1 bg-${cellValue ? 'custom-blue': 'success'}`
+          }}
+          className="capitalize gap-4"
+        >
+          {cellValue ? 'Administrador' : 'Operario'}
+        </Chip>
+      );
     default:
       return (
         <span
