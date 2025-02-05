@@ -7,7 +7,6 @@ import DropdownPanel from '../TopContentComponents/FilterSection/DropdownPanel';
 //import {parseAbsoluteToLocal} from "@internationalized/date";
 import { DateTime } from 'luxon';
 import AddIncidenciaModal from '../TopContentComponents/Modal/AddIncidenciaModal';
-import FilterSearchAndDatePicker from '../TopContentComponents/FilterSection/SelectionInput';
 import PaginationInfo from '../TopContentComponents/FilterSection/PaginationInfo';
 
 const data = [
@@ -265,20 +264,12 @@ export default function TableTopContent({
 
   return (
     //Contenedor del area de los filtros y la sección con los datos de paginado
-    <div className="flex flex-col max-w-full">
+    <div className="flex flex-col w-full h-auto">
       {/*Contenedor de los datos de filtrado*/}
       <div className="flex justify-between items-end">
         {Modal} {/*El Modal solo se reenderiza en las condiciones del useMemo()*/}
-        <div className="overflow-x-auto flex flex-col md:flex-row md:justify-start sm:justify-start sm:flex-row items-center w-full justify-between min-h-full sm:space-x-2 sm:space-y-0">
+        <div className="flex overflow-y-hidden flex-col md:flex-row md:justify-start sm:justify-start sm:flex-row items-end w-full justify-end sm:space-x-2 sm:space-y-0">
           {/*Aquí se configura el autocomplete*/}
-          <FilterSearchAndDatePicker
-            filterValue={filterValue}
-            setFilterValue={setFilterValue}
-            onSearchChange={onSearchChange}
-            haFilterSelect={haFilterSelect}
-            date={date}
-            setDate={setDate}
-          />
           <DropdownPanel
             statusSelection={statusSelection}
             setStatusSelection={setStatusSelection}

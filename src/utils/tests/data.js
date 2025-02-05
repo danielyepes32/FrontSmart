@@ -11,6 +11,14 @@ const columns = [
   {name: "ACCION", uid : "actions", sortable: true},
 ];
 
+const userColumns = [
+  {name: "CODIGO DE USUARIO", uid: "username", sortable: true},
+  {name: "CORREO", uid: "email", sortable: true},
+  {name: "SUPERUSUARIO", uid: "is_superuser", sortable: true},
+  {name: "FECHA CREACION", uid: "date_joined", sortable: true},
+  {name: "ACCION", uid : "actions", sortable: true},
+];
+
 const statusOptions = [
   {name: "Active", uid: "active"},
   {name: "Paused", uid: "paused"},

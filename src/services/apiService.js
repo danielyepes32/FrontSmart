@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {refresh_token} from './loginService';
+import {call_refresh} from './loginService';
 const baseUrl = 'http://localhost:8000/api/v1/'; //3.135.197.152
 
 const withRetry = (fn) => {
@@ -7,7 +7,14 @@ const withRetry = (fn) => {
     try {
       return await fn(...args);
     } catch (error) {
-      return refresh_token(error, fn);
+      if (axios.isCancel(error)) {
+        console.warn("Request cancelled:", error.message);
+        return;
+      }
+      console.error("Error en la solicitud:", error);
+      console.log('Error:', error);
+      // Si el error es de tipo 401, se intenta refrescar el token
+      return await call_refresh(error, fn, ...args);
     }
   };
 };
@@ -18,6 +25,14 @@ const getAll = withRetry(async (params) => {
     const response = await axios.get(baseUrl+`meters?format=json&${queryString}`, {withCredentials: true});
     console.log(response.data);
     return response.data;
+});
+
+//servicio para hacerle get a los valores de los medidores
+const getAllDescriptions = withRetry(async (params) => {
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`users/descriptions/?format=json&${queryString}`, {withCredentials: true});
+  console.log(response.data);
+  return response.data;
 });
 
 //servicio para hacerle get a los valores de los medidores
@@ -139,7 +154,6 @@ export const postTriggerIncidencia = withRetry(async (data) => {
 
 //Servicio para generar el autocomplete
 const autocompleteMeters = async (params, signal) => {
-  try {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`meters/autocomplete/?format=json&${queryString}`,{
       signal: signal || undefined,
@@ -147,16 +161,6 @@ const autocompleteMeters = async (params, signal) => {
     });
     console.log(response.data);
     return response.data;
-  } catch (error) {
-    if (axios.isCancel(error)) {
-      console.warn('Request cancelled:', error.message, signal);
-    } else {
-      console.error('Error fetching gateway data:', error);
-    }
-    if (!axios.isCancel(error)) {
-      return refresh_token(error, autocompleteMeters);
-    }
-  }
 };
 
 
@@ -305,6 +309,7 @@ const getGatewayLogs = withRetry(async (equipId, params) => {
 
 
 export default {
+  getAllDescriptions,
   getGatewayLogs,
   postTriggerIncidencia, 
   getAll, 

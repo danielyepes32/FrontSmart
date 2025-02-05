@@ -21,7 +21,7 @@ const DropdownPanel = ({
   columns
 }) => {
   return (
-    <div className='lg:pl-10 lg:space-x-3 overflow-x-auto justify-between flex flex-col md:space-x-0 sm:space-x-0 md:flex-row sm:flex-row'>
+    <div className='mb-4 lg:pl-10 lg:space-x-3 justify-end flex flex-col md:space-x-0 sm:space-x-0 md:flex-row sm:flex-row w-full'>
       
       {/* Dropdown for Status */}
       <Dropdown>
@@ -174,9 +174,9 @@ const DropdownPanel = ({
       <Button
         className="bg-custom-blue text-background"
         endContent={<PlusIcon />}
+        isIconOnly
         onClick={onOpen}
       >
-        Agregar Incidencia
       </Button>
     </div>
   );

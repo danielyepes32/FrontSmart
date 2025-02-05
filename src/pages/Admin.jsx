@@ -11,6 +11,7 @@ import FileUpload from './admin/ImportExcel';
 import GatewayDashboard from './admin/dashboard/GatewaysDashboard';
 import PowerView from './admin/PowerBI';
 import DashboardMain from './admin/DashboardMain';
+import AccounManagment from './admin/userManagment';
 
 const Admin = () => {
 
@@ -59,6 +60,7 @@ const Admin = () => {
         <Route path="/upload" element={<FileUpload sidebar={sidebar} />} />
         <Route path="/gateways/*" element={<DashboardMain sidebar={sidebar} />} />
         <Route path="/power_view" element={<PowerView sidebar={sidebar} />} />
+        <Route path="/accountManagment" element={<AccounManagment sidebar={sidebar} />} /> 
       </Routes>
       {/* Botón del menú móvil */}
       <button

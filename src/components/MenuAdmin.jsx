@@ -3,6 +3,7 @@ import { RiDashboardLine, RiLogoutBoxLine } from 'react-icons/ri';
 import React, { useState, useEffect } from 'react';
 import { PiWarningOctagonBold } from "react-icons/pi";
 import { MdOutlineDataSaverOn } from "react-icons/md";
+import { VscAccount } from "react-icons/vsc";
 
 const Menu = ({ sidebar, handleSidebar }) => {
   const location = useLocation();
@@ -138,7 +139,7 @@ const Menu = ({ sidebar, handleSidebar }) => {
                         <path d="M19 15C16.79 15 15 16.79 15 19C15 19.75 15.21 20.46 15.58 21.06C16.27 22.22 17.54 23 19 23C20.46 23 21.73 22.22 22.42 21.06C22.79 20.46 23 19.75 23 19C23 16.79 21.21 15 19 15ZM21.07 18.57L18.94 20.54C18.8 20.67 18.61 20.74 18.43 20.74C18.24 20.74 18.05 20.67 17.9 20.52L16.91 19.53C16.62 19.24 16.62 18.76 16.91 18.47C17.2 18.18 17.68 18.18 17.97 18.47L18.45 18.95L20.05 17.47C20.35 17.19 20.83 17.21 21.11 17.51C21.39 17.81 21.37 18.28 21.07 18.57Z" stroke="currentColor"/>
                         <path d="M20 9.84H4C3.45 9.84 3 10.29 3 10.84V17C3 20 4.5 22 8 22H12.93C13.62 22 14.1 21.33 13.88 20.68C13.68 20.1 13.51 19.46 13.51 19C13.51 15.97 15.98 13.5 19.01 13.5C19.3 13.5 19.59 13.52 19.87 13.57C20.47 13.66 21.01 13.19 21.01 12.59V10.85C21 10.29 20.55 9.84 20 9.84ZM9.21 18.21C9.02 18.39 8.76 18.5 8.5 18.5C8.24 18.5 7.98 18.39 7.79 18.21C7.61 18.02 7.5 17.76 7.5 17.5C7.5 17.24 7.61 16.98 7.79 16.79C7.89 16.7 7.99 16.63 8.12 16.58C8.49 16.42 8.93 16.51 9.21 16.79C9.39 16.98 9.5 17.24 9.5 17.5C9.5 17.76 9.39 18.02 9.21 18.21ZM9.21 14.71C9.16 14.75 9.11 14.79 9.06 14.83C9 14.87 8.94 14.9 8.88 14.92C8.82 14.95 8.76 14.97 8.7 14.98C8.63 14.99 8.56 15 8.5 15C8.24 15 7.98 14.89 7.79 14.71C7.61 14.52 7.5 14.26 7.5 14C7.5 13.74 7.61 13.48 7.79 13.29C8.02 13.06 8.37 12.95 8.7 13.02C8.76 13.03 8.82 13.05 8.88 13.08C8.94 13.1 9 13.13 9.06 13.17C9.11 13.21 9.16 13.25 9.21 13.29C9.39 13.48 9.5 13.74 9.5 14C9.5 14.26 9.39 14.52 9.21 14.71ZM13.21 18.21C13.02 18.39 12.76 18.5 12.5 18.5C12.24 18.5 11.98 18.39 11.79 18.21C11.61 18.02 11.5 17.76 11.5 17.5C11.5 17.24 11.61 16.98 11.79 16.79C12.07 16.51 12.51 16.42 12.88 16.58C13.01 16.63 13.11 16.7 13.21 16.79C13.39 16.98 13.5 17.24 13.5 17.5C13.5 17.76 13.39 18.02 13.21 18.21Z" stroke="currentColor"/>
                       </svg>
-                    Gestión de datos
+                    Gestión de dispositivos
                   </div>
 
                   {/* Submenú con animación */}
@@ -178,7 +179,16 @@ const Menu = ({ sidebar, handleSidebar }) => {
                     </ul>
                   </div>
                 </li>
-
+                <li>
+                  <NavLink
+                    to="/admin/accountManagment"
+                    className={({ isActive }) => generateLinkClasses(isActive)}
+                    onClick={() => handleLinkClick("/admin/accountManagment")}
+                  >
+                    <VscAccount />
+                    Administrador de cuentas
+                  </NavLink>
+                </li>
                 {/* Opciones adicionales y cierre de sesión */}
                 <div className='flex flex-col mt-auto absolute bottom-0 py-6'>
                   {/* Opción de cerrar sesión */}

@@ -18,29 +18,42 @@ const login = async (username, password) => {
 }
 
 const refresh_token = async () => {
-    const response = axios.post(`${BASE_URL}token/refresh/`,{},
-        {withCredentials: true
+    try {
+        const response = await axios.post(`${BASE_URL}token/refresh/`, {}, { withCredentials: true });
 
-        }
-    )
+        console.log("respuesta del refresh: ", response);
 
-    return response.data.refreshed;
-}
-
-const call_refresh = async (error, func) => {
-    if (error.response && error.response.status === 401) {
-        const tokenRefreshed = await refresh_token();;
-
-        if (tokenRefreshed){
-            const retryResponse = await func();
-            return retryResponse.data;
-        }else{
-            console.error('Error refreshing token');
-        }
-
-    }else{
-        console.error('Error fetching data:', error);
+        return response.data?.refreshed; // Usa el operador ?. para evitar errores si data es undefined
+    } catch (error) {
+        console.error("Error al refrescar el token:", error);
+        return null;
     }
 }
+
+
+const call_refresh = async (error, func, ...args) => {
+    if (error.response && error.response.status === 401) {
+        const tokenRefreshed = await refresh_token();
+        
+        if (tokenRefreshed) {
+            try {
+                const retryResponse = await func(...args);
+                console.log("Respuesta después del refresh:", retryResponse);  // Debug
+                return retryResponse;  // Devuelve la respuesta completa
+            } catch (retryError) {
+                console.error('Error reintentando la solicitud:', retryError);
+                return null;
+            }
+        } else {
+            console.error('Error al refrescar el token.');
+            return null;
+        }
+    } else {
+        console.error('Error en la solicitud:', error);
+        return null;
+    }
+};
+
+
 
 export { login, refresh_token , call_refresh};
