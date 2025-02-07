@@ -35,12 +35,14 @@ const CustomTable = ({
   const classNames = React.useMemo(
     () => ({
       wrapper: ["max-h-[382px]", "max-w-3xl"],
+      table:["selected-all"],
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider","text-center"],
       td: [ 
         //Agregar las celdas en la mitad del componente
         "align-middle text-center",
         // changing the rows border radius
         // first
+        "data-[selected=true]:select-text",
         "group-data-[first=true]:first:before:rounded-none",
         "group-data-[first=true]:last:before:rounded-none",
         // middle
@@ -49,6 +51,7 @@ const CustomTable = ({
         "group-data-[last=true]:first:before:rounded-none",
         "group-data-[last=true]:last:before:rounded-none",
       ],
+      tr: ["selected-text"]
     }),
     [],
   );

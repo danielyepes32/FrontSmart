@@ -12,9 +12,15 @@ const withRetry = (fn) => {
         return;
       }
       console.error("Error en la solicitud:", error);
-      console.log('Error:', error);
-      // Si el error es de tipo 401, se intenta refrescar el token
-      return await call_refresh(error, fn, ...args);
+      // Intentar refrescar el token si el error es 401
+      const retryResult = await call_refresh(error, fn, ...args);
+
+      // Si call_refresh no puede recuperar la solicitud, lanzamos el error para que el catch externo lo capture
+      if (!retryResult) {
+        throw error; // 🔥 Lanzar el error para que lo capture el catch en el componente
+      }
+      
+      return retryResult;
     }
   };
 };
@@ -34,6 +40,20 @@ const getAllDescriptions = withRetry(async (params) => {
   console.log(response.data);
   return response.data;
 });
+
+const createUser = withRetry(async (data) =>
+  {
+    console.log("Data: ", data)
+    const response = await axios.post(baseUrl+`users/register/?format=json&`,data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    console.log(response.data);
+    return response.data;
+  }
+)
 
 //servicio para hacerle get a los valores de los medidores
 const getCountOnlineGateways = withRetry(async (params) => {
@@ -335,5 +355,6 @@ export default {
   downloadTemplate,
   getConteoIncidencias,
   autocompleteGatewayMysql,
-  getCountOnlineGateways
+  getCountOnlineGateways,
+  createUser
 };

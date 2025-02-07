@@ -6,7 +6,7 @@ import {useDisclosure} from "@nextui-org/react";
 import DropdownPanel from '../TopContentComponents/FilterSection/DropdownPanel';
 //import {parseAbsoluteToLocal} from "@internationalized/date";
 import { DateTime } from 'luxon';
-import AddIncidenciaModal from '../TopContentComponents/Modal/AddIncidenciaModal';
+import RegisterUserModal from '../TopContentComponents/Modal/RegisterUserModal';
 import PaginationInfo from '../TopContentComponents/FilterSection/PaginationInfo';
 
 const data = [
@@ -32,27 +32,18 @@ const data = [
 ];
 
 export default function TableTopContent({
-    filterValue,
-    onSearchChange,
-    setFilterValue,
-    statusFilter,
-    setStatusFilter,
-    statusSelection,
-    setStatusSelection,
-    statusOptions,
-    visibleColumns,
-    setVisibleColumns,
-    columns,
-    date,
-    setDate,
     usersLength,
     onRowsPerPageChange,
-    dataStatusOptions,
-    haFilterSelect,
 }) {
   //Variables del componente-----------------------------------------------------------------------------------------------
   //-----------------------------------------------------------------------------------------------------------------------
   //Aqui se establece el valor para saber si se activa o no la ventana emergente
+
+  const [nombre, setNombre] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [user, setUser] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   //Esta variable guarda la validacion para evitar que se realizen consultas sin seleccionar un campo a modificar en el medidor
   const [isInvalid, setIsInvalid] = React.useState(true);
@@ -67,7 +58,6 @@ export default function TableTopContent({
   //Este dato almacena el valor que se está escribiendo en las input del autocomplete
   const [searchValue, setSearchValue] = React.useState('');
   //Este dato almacena la página en la que nos encontramos ahora
-  const [page, setPage] = React.useState(1);
   //Se almacena el archivo de la imagen seleccionada en el modal de incidencia en forma de ruta temporal para ser previsualizado
   const [image, setImage] = React.useState(null);
   //Aquí se guarda la imagen en un archivo base64
@@ -91,176 +81,91 @@ export default function TableTopContent({
     }
   }, [selectedModify]);
 
-  //Se ejecuta un effect para cargar las posibles sugerencias del autocomplete para el medidor a cargar la incidencia
-  React.useEffect(() => {
-    //Al estar ejecutando el fetch activamos el loading de la data
-    //El llamado a la API se ejecuta solo cuando cambia el valor del input deja de ser null o empty
-    if (searchValue.length > 0) {
-      //setIsLoading(true);
-      //Función para hacer llamado a la API
-      const fetchSuggestions = async () => {
-        try {
-        //inizializamos los parametros de consultas a la API de consumo
-        const params = {
-          q: searchValue, //Parametro a comparar para buscar coincidencias
-          page:1, //La API trae los datos de manera paginada, aquí se establece que se quiere solo la p´rimer página
-          page_size : 10 //Además solo trae las primeras 10 coincidencias
-        };
-        const response = await apiService.autocompleteMeters(params);
-        //Guardamos las sugerencias con un useState en suggestions
-        setSuggestions(response["results"]);
-        } catch (error) {
-        //En caso de error en el llamado a la API se ejecuta un console.error
-        console.error('Error fetching initial meters:', error);
-        } finally {
-        //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
-        //console.log("salio");
-        }
-      };
-      //Se ejecuta la función luego de ser declarado en el effect puesto que es una función asincronica
-      fetchSuggestions();
-    }
-  }, [searchValue]); //Se ejecuta siempre qeu cambie el valor de busqueda en el Autocomplete
-
-
   //Función asincrónica para hacer llamado a la API y crear una incidencia
-  const handleCreateIncidencia = async () => {
-    // Crea el objeto incidencia basado en la lógica proporcionada
-    const fechaActual = DateTime.now().setZone('America/Lima');
-    const meterCode = searchValue; // Este es un ejemplo, asegúrate de obtener este valor dinámicamente
+  const handleCreateUser = async () => {
 
-
-
-    // Validación de los parámetros necesarios
-    if (!selectedKeys) {
-      alert("Error: El 'anchorKey' de selectedKeys es necesario.");
+    if (!nombre) {
+      alert("Error: El nombre de usuario es necesario.");
       return;
     }
 
-    const falloRegistro = data
-                          .filter((falla)=> falla.name === selectedKeys.anchorKey)
-                          .map((record) => record.id); // Extrae el campo 'id' de los registros filtrados // Este es un ejemplo, asegúrate de obtener este valor dinámicamente
-    const falloId = falloRegistro[0]
-
-    if (!meterCode) {
-      alert("Error: El 'meterCode' es necesario.");
+    if (!user) {
+      alert("Error: El usuario de acceso no está definido.");
       return;
     }
 
-    if (!falloId) {
-      alert("Error: El 'falloId' no está definido.");
+    if (!password) {
+      alert("Error: La contraseña es necesaria");
       return;
     }
 
-    if (!imageFile) {
-      alert("Error: La imagen en base64 es necesaria.");
+    if (!email) {
+      alert("Error: El correo debe estar definido.");
       return;
     }
-
-    if (!encargado) {
-      alert("Error: El encargado debe estar definido.");
-      return;
-    }
-
-    // Eliminar el prefijo 'data:image/png;base64,' si está presente
-    const base64Data = imageFile.split(',')[1]; // Esto elimina el prefijo
 
     //Parametros necesarios para la creación de la incidencia
-    const incidenciaData = {
-      //ID de la incidencia compuesto por IDENTIFICADO + FECHA + FALLOID
-      incidencia_id: `${meterCode}${fechaActual.toFormat('yyyyMMdd')}${falloId}`,
-      //Identificador del medidor
-      meter_code: meterCode,
-      //Fecha de la incidencia
-      fecha_incidencia: fechaActual.toFormat('yyyy-MM-dd HH:mm:ss'),
-      //Identificador de la falla
-      falla: falloId,
-      //Encargado de reportar la falla
-      encargado: encargado,
-      //Imagen de la incidencia en base 64
-      img: base64Data,
-    };
+    const UsuarioData = {
+      username: user,
+      email: email,
+      password: password,
+      descriptions: [
+          {
+              description_desc: 'descripción',
+              user_name: nombre
+          }
+      ]
+  };
 
-    console.log("Datos incidencia: ",incidenciaData)
+    console.log("Datos de registro: ", UsuarioData)
 
     try {
-      const newIncidencia = await apiService.postIncidencia(incidenciaData);
-      console.log('Nueva incidencia creada:', newIncidencia);
-      alert("Nueva incidencia insertada para el medidor ", newIncidencia.meter_code)
+      const newUser = await apiService.createUser(UsuarioData);
+      console.log('Nueva incidencia creada:', newUser);
+      alert("Nueva incidencia insertada para el medidor ", newUser)
       // Aquí puedes manejar el éxito de la creación, como mostrar una notificación o actualizar el estado
     } catch (error) {
-      console.error('Error al crear incidencia:', error);
-      if(error.incidencia_id){
-        alert("Inserción cancelada, ese identificador ya existe")
-        console.log(error.incidencia_id)
+      if(error.response.status === 400){
+        alert("Inserción cancelada, ese usuario ya existe")
+      }else if (error.response.status === 404) {
+        if (error.response.data.email){
+          alert("Ingrese un correo válido")
+        }else{
+          alert("Inserción cancelada, ingrese todos los valores")
+        }
       }else{
         alert("Error al crear la incidencia")
         console.log("Otro error")
       }
-      // Maneja el error, como mostrar un mensaje de error
-      } finally {
     }
   };
   //Fin de la función de creación de incidencias
-
-  //Al cambiar el valor de la busqueda del autocomplete este se va actualizando en tiempo real con este callback
-  const onAutocompleteChange = React.useCallback((value) => {
-    if (value) {
-      setSearchValue(value);
-      setPage(1);
-    } else {
-      setSearchValue("");
-    }
-  }, []);
-
-  //Función para obtener la imagen del modal
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      // Convertir la imagen a base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImageFile(reader.result); // Establecer la imagen en base64
-        setImage(URL.createObjectURL(file)); // Establecer la previsualización
-      };
-      reader.readAsDataURL(file); // Lee el archivo como base64
-    } else {
-      alert('Por favor, selecciona un archivo de imagen válido');
-    }
-  };
-  //------------------------------------------------------------------------------------------------------------------------
-  // Dividir el arreglo en dos partes
-  const midIndex = Math.ceil(dataStatusOptions.length / 2);
-  const firstColumn = dataStatusOptions.slice(0, midIndex);
-  const secondColumn = dataStatusOptions.slice(midIndex);
-
   //-----------------------------------------------------------------------------------------------------------------------
   // Componentes reenderizados de manera externa
 
   //Componente modal para el cargue de incidencias
   const Modal = React.useMemo(()=>{
     return (
-      <AddIncidenciaModal
+      <RegisterUserModal
+        nombre={nombre}
+        user={user}
+        email={email}
+        password={password}
+        setNombre={setNombre}
+        setUser={setUser}
+        setEmail={setEmail}
+        setPassword={setPassword}
         isOpen={isOpen} //Está el modal abierto
         onOpenChange={onOpenChange} //Se ha ejecutado un cambio en la visibilidad del modal
-        suggestions={suggestions} //Sugerencias del autocmplete de la incidencia
-        data={data} // Proporciona datos de las fallas
-        handleImageChange={handleImageChange} //Carga de la imagen
-        image={image} //Imagen temporal para previsualizar
-        setEncargado={setEncargado} //state para cambiar el valor de encargado
-        encargado={encargado} //Valor del encargado de cargar esa incidencia
-        handleCreateIncidencia={handleCreateIncidencia} //Función para crear la incidencia
+        handleCreateUser={handleCreateUser} //Función para crear la incidencia
         selectedModify={selectedModify} //Selección del tipo de falla en el radioGroup
         setSelectedModify={setSelectedModify} //Cambiar la selección
-        selectedKeys={selectedKeys} //Valor seleccionado de falla
         setSelectedKeys={setSelectedKeys} //Cambiar el valor de falla seleccionada
         isInvalid={isInvalid} //Invalidar en caso de no seleccionbar algun valor en el radioGroup
         setIsInvalid={setIsInvalid} //Cambiar el estado de validación
-        onAutocompleteChange={onAutocompleteChange} //En caso de que cambie el valor del autocomplete
-        dataStatusOptions={dataStatusOptions} //Posibles fallas en el dropdown
       />
     )
-  },[isOpen, selectedModify, selectedKeys, suggestions, image, encargado])  
+  },[isOpen, selectedModify, selectedKeys, suggestions, image, encargado, nombre, user, email, password])  
 
   return (
     //Contenedor del area de los filtros y la sección con los datos de paginado

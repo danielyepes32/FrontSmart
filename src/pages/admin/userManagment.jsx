@@ -372,28 +372,9 @@ const AccountManagement = () => {
   const topContent = React.useMemo(() => {
     return (
       <TableTopContent
-        date = {date}
-        setDate = {setDate}
-        filterValue={filterValue}
-        onSearchChange={onSearchChange}
-        setFilterValue={setFilterValue}
-        statusSelection = {fallaDescFilter}
-        setStatusSelection={setFallaDescFilter}
-        statusFilter={fallaTypeFilter}
-        setStatusFilter={setFallaTypeFilter}
-        statusOptions={fallaType}
-        visibleColumns={visibleColumns}
-        setVisibleColumns={setVisibleColumns}
-        columns={userColumns}
-        users={meters}
-        haFilterSelect={hasSearchFilter}
         usersLength = {metersLength}
         dataStatusOptions = {fallaDesc}
         onRowsPerPageChange={onRowsPerPageChange}
-        meter = {selectedMeter}
-        meters = {meters}
-        tapas={tapas}
-        setMeters = {setFilterValue}
       />
     );
   }, [

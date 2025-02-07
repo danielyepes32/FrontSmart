@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Chart as ChartJS, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import axios from 'axios';
 import { DateTime } from 'luxon'; // Importar Luxon
 import apiService from '../../../services/apiService';
 

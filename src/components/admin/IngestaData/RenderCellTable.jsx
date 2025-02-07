@@ -90,8 +90,15 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
         </div>
       );
 
-    default:
-      return cellValue;
+      default:
+        return (
+          <span
+            onMouseDown={(e) => e.stopPropagation()} 
+            onPointerDown={(e) => e.stopPropagation()} 
+            >
+              {cellValue}
+          </span>
+        );
   }
 };
 
