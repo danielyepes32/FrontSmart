@@ -31,7 +31,6 @@ const RegisterUserModal = (
 
   const handleClick = () => {
     setOpenEye(!openEye);
-    console.log("Open: ", openEye)
   };
 
   return (

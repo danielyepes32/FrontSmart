@@ -100,8 +100,6 @@ export default function IngestaAdmin(sidebar) {
         const falla_desc = Array.from(fallaDescFilter);
         falla_desc_string = falla_desc.join(',');
       }
-
-      console.log(date)
       //Luego de tener los parametros de creador ejecutamos el try - catch
       try {
         //inizializamos los parametros de consultas a la API de consumo
@@ -197,7 +195,6 @@ export default function IngestaAdmin(sidebar) {
 
       // Unir los elementos del Array en una cadena separada por comas
       fallaTypeString = fallaTypeArray.join(',');
-      console.log(fallaTypeString)
     }
     try {
       const params = {
@@ -205,8 +202,6 @@ export default function IngestaAdmin(sidebar) {
       }
       const response = await apiService.getFallaDesc(params);
       const fallas = response.results;
-      console.log("fallas_API", fallas)
-      console.log("fallaDescFilter", fallaTypeFilter)
         // Formatear los datos
       return fallas.map((falla) => ({
         name: falla["falla_desc"].toUpperCase(),

@@ -122,7 +122,6 @@ const MainModal = (
       };
 
       const handleFileChange = async (event) => {
-        console.log("Datos medidores: ", meter)
         const file = event.target.files[0];
         if (file && file.type === "application/pdf") {
             const arrayBuffer = await file.arrayBuffer();
@@ -252,7 +251,6 @@ const MainModal = (
             });
           
           // Dibujar textos usando la función auxiliar
-          console.log(processedTextsAndPositions)
           processedTextsAndPositions.forEach(({ text, x, y }) => drawText(text, x, y));
         
             // Agregar imagen al PDF desde Base64
@@ -307,6 +305,19 @@ const MainModal = (
             alert("Por favor, selecciona un archivo PDF válido.");
         }
     };
+
+      const handleDeleteUser = async (userId) => {
+        try {
+            const data = await apiService.deleteUserById(userId);
+            alert("Usuario eliminado con éxito.");
+            window.location.reload();
+            // Aquí podrías actualizar el estado o recargar la lista de usuarios
+        } catch (error) {
+            console.error("Error al eliminar usuario:", error);
+            alert("Hubo un problema al eliminar el usuario.");
+        }
+    };
+  
     
       
       const getButtonText = React.useMemo(() => {
@@ -322,6 +333,8 @@ const MainModal = (
             return "Mostrar Imagen";
           case "generateReport":
             return "Generar Reporte";
+          case "deleteUser":
+            return "Eliminar un usuario"
           default:
             return "Cerrar";
         }
@@ -336,6 +349,10 @@ const MainModal = (
             return handleCreateIncidencia;
           case "generateReport":
             return onOpen;
+          case "deleteUser":
+            return (
+              handleDeleteUser(meter.owner)
+            );
           default:
             return null;
         }
@@ -361,7 +378,7 @@ const MainModal = (
         >
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col w-full gap-1 bg-custom-blue text-white border shadow shadow-lx text-center font-bold uppercase">{`Meter code Seleccionado: ${meter.meter_code}`}</ModalHeader>
+              <ModalHeader className="flex flex-col w-full gap-1 bg-custom-blue text-white border shadow shadow-lx text-center font-bold uppercase">{`${meter.user_name ? `Usuario seleccionado: ${meter.user_name}` : `Meter code Seleccionado: ${meter.meter_code}`}`}</ModalHeader>
               <ModalBody className="flex flex-col w-full gap-1 bg-white border shadow shadow-lx">
                 {renderContent(actionKey)}
               </ModalBody>
@@ -379,8 +396,14 @@ const MainModal = (
                 </Button>
                 <Button
                   className={`bg-custom-blue font-bold text-[15px] text-white ${actionKey === "details" || actionKey === "ShowImage" ? "hidden" : ""}`}
-                  onPress={handleButtonPress(actionKey) === null ? onClose : handleButtonPress(actionKey)}
-                  isDisabled={
+                  onClick={async () => {
+                    const action = await handleButtonPress(actionKey);
+                    if (action){
+                      await action()
+                    } else {
+                      onClose()
+                    };  // Solo ejecuta la función si existe
+                  }}                  isDisabled={
                     actionKey === "edit" ? selectedModify.length === 0 : false
                   }
                 >
@@ -411,7 +434,7 @@ const MainModal = (
       >
         {(onCloseSecond) => (
           <>
-            <ModalHeader className="flex flex-col w-full gap-1 bg-custom-blue text-white border shadow shadow-lx text-center font-bold uppercase">{`Meter code Seleccionado: ${meter.meter_code}`}</ModalHeader>
+            <ModalHeader className="flex flex-col w-full gap-1 bg-custom-blue text-white border shadow shadow-lx text-center font-bold uppercase">{`${meter.user_name ? `Usuario seleccionado: ${meter.user_name}` : `Meter code Seleccionado: ${meter.meter_code}`}`}</ModalHeader>
             <ModalBody className="flex flex-col w-full gap-1 bg-white border shadow shadow-lx">
               <div className="w-full flex flex-col place-items-center justify-center">
               <label>

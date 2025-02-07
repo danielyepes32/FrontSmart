@@ -5,7 +5,7 @@ import { PiWarningOctagonBold } from "react-icons/pi";
 import { MdOutlineDataSaverOn } from "react-icons/md";
 import { VscAccount } from "react-icons/vsc";
 
-const Menu = ({ sidebar, handleSidebar }) => {
+const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState("/admin/dashboard");
@@ -53,7 +53,7 @@ const Menu = ({ sidebar, handleSidebar }) => {
           sidebar ? 'opacity-100 translate-x-0 visible' : 'opacity-0 -translate-x-full invisible'
         }`}>
           <div className="flex justify-center p-8">
-            <h1 className="text-blue-admin font-poppins font-medium text-24 px-3">Administrador</h1>
+            <h1 className="text-blue-admin font-poppins font-medium text-24 px-3">{isSuperUser ? 'Administrador' : 'Colaborador'}</h1>
           </div>
           <div className="flex flex-col w-full">
             {/* Menú Admin */}
@@ -179,7 +179,7 @@ const Menu = ({ sidebar, handleSidebar }) => {
                     </ul>
                   </div>
                 </li>
-                <li>
+                <li className={isSuperUser ? '' : 'hidden'}>
                   <NavLink
                     to="/admin/accountManagment"
                     className={({ isActive }) => generateLinkClasses(isActive)}

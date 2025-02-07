@@ -113,8 +113,6 @@ const AccountManagement = () => {
           ordering: sortDescriptor.direction === 'ascending' ? sortDescriptor.column : `-${sortDescriptor.column}`        };
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
         const initialMeters = await apiService.getAllDescriptions(params);
-        
-        console.log(initialMeters)
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
         setMeters(initialMeters['results']);
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
@@ -189,7 +187,6 @@ const AccountManagement = () => {
 
       // Unir los elementos del Array en una cadena separada por comas
       fallaTypeString = fallaTypeArray.join(',');
-      console.log(fallaTypeString)
     }
     try {
       const params = {
@@ -197,8 +194,6 @@ const AccountManagement = () => {
       }
       const response = await apiService.getFallaDesc(params);
       const fallas = response.results;
-      console.log("fallas_API", fallas)
-      console.log("fallaDescFilter", fallaTypeFilter)
         // Formatear los datos
       return fallas.map((falla) => ({
         name: falla["falla_desc"].toUpperCase(),
@@ -481,8 +476,22 @@ const AccountManagement = () => {
                             </div>
                         </div>
                 </div>
-                <div className='h-[50vh] rounded-xl bg-white shadow-lg w-full mt-4'>
+                <div className="h-[50vh] rounded-xl bg-white shadow-lg w-full mt-4 p-6 flex flex-col justify-between">
+                  {/* Título */}
+                  <div className="border-b pb-4 flex-col justify-center place-items-center">
+                    <h2 className="text-xl font-semibold text-gray-700">Gestión de Usuarios</h2>
+                    <p className="text-gray-500 text-sm text-center">Visualiza y administra la información de los usuarios registrados.</p>
+                  </div>
 
+                  {/* Información general */}
+                  <div className="flex-1 flex flex-col justify-center items-center text-gray-500">
+                    <p className="text-lg text-center">Actualmente hay <span className="font-semibold text-gray-700">{metersLength}</span> usuarios registrados.</p>
+                  </div>
+
+                  {/* Pie de información */}
+                  <div className="text-gray-600 text-sm border-t pt-4 text-center">
+                    Última actualización: <span className="font-semibold">En tiempo real</span>
+                  </div>
                 </div>
             </div>
         </div>

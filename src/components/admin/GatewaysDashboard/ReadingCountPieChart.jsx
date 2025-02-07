@@ -21,7 +21,6 @@ const ReadingCountPieChart = ({ pieChartData, setSelectedCreators }) => {
                 const index = elements[0].index;
                 const selectedLabel = pieChartData.labels[index];
                 setSelectedCreators(selectedLabel);
-                console.log(selectedLabel);
             }
         },
     };

@@ -168,7 +168,6 @@ const PopUpModal = ({
 
  //Esta consulta se ejecuta y usa los parametros de consulta
  React.useEffect(() => {
-  console.log("Entra a la consulta")
   if(isOpen === true){
   //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
   const fetchData = async () => {
@@ -213,7 +212,6 @@ const PopUpModal = ({
       };
       //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
       const initialMeters = await apiService.getAllAlarms(params);
-      console.log("Consulta medidores", initialMeters)
       //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
       setMeters(initialMeters["results"]);
       //usamos el componente "count" de la consulta para establecer el tamaño de los registros
@@ -424,6 +422,17 @@ const PopUpModal = ({
               meter={meter}
             />
           )
+        case 'deleteUser':
+          return (
+            <div className="p-6 bg-white w-full">
+            <h2 className="text-xl font-semibold text-gray-800">
+              ¿Estás seguro de que quieres eliminar este usuario?
+            </h2>
+            <p className="text-gray-600 mt-2">
+              Esta acción no se puede deshacer. Una vez eliminado, no podrás recuperar la información del usuario.
+            </p>
+          </div>
+          )
         default:
             return 'Acción no especificada.';
     }};
@@ -462,21 +471,16 @@ const PopUpModal = ({
       //Imagen de la incidencia en base 64
       img: base64Data,
     };
-
-    console.log("Datos incidencia: ",incidenciaData)
     try {
       const newIncidencia = await apiService.postIncidencia(incidenciaData);
-      console.log('Nueva incidencia creada:', newIncidencia);
       alert("Nueva incidencia insertada para el medidor ", newIncidencia.meter_code)
       // Aquí puedes manejar el éxito de la creación, como mostrar una notificación o actualizar el estado
     } catch (error) {
       console.error('Error al crear incidencia:', error);
       if(error.incidencia_id){
         alert("Inserción cancelada, ese identificador ya existe")
-        console.log(error.incidencia_id)
       }else{
         alert("Error al crear la incidencia")
-        console.log("Otro error")
       }
       // Maneja el error, como mostrar un mensaje de error
       } finally {

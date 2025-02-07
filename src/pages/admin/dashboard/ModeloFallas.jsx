@@ -67,7 +67,6 @@ const ModeloFallas = ({ sidebar }) => {
         } else {
         setFilterValue("");
         }
-        console.log("Valor autocomplete: ", value)
     }, []);
 
     //-------------------------------------------------------------------------------------

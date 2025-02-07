@@ -125,7 +125,6 @@ const FileUpload = () => {
           
             try {
               const res = await apiService.postTriggerIncidencia(formData);
-              console.log(res)
               //setResponse(res);
               //setError(null);
               //res === undefined ? null : onOpen()
@@ -308,7 +307,6 @@ const FileUpload = () => {
                                                     <div className='px-4'>
                                                         <span className='text-[56px] text-black font-poppins font-regular'>
                                                             {React.useMemo(() => {
-                                                                console.log(finishedLineData.W)
                                                                 return parseInt(finishedLineData.W);
                                                             }, [finishedLineData])//Se ejecuta cada que hay un cambio en la constante vsisibleColumns
                                                             }

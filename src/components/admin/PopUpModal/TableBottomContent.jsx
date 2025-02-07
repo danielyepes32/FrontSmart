@@ -9,7 +9,6 @@ const BottomContent = ({
   itemsLength,
   hasSearchFilter
 }) => {
-  console.log("keys: ",selectedKeys)
   return (
     <div className="flex flex-wrap w-full gap-4 items-center justify-center">
       <Pagination

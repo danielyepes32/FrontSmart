@@ -69,7 +69,6 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                         onSelectionChange={
                             (key)=>{
                                 setFilteredGatewayu(key)
-                                console.log(key)
                             }
                         }
 

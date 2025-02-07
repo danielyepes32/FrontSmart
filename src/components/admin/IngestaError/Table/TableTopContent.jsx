@@ -182,21 +182,16 @@ export default function TableTopContent({
       img: base64Data,
     };
 
-    console.log("Datos incidencia: ",incidenciaData)
-
     try {
       const newIncidencia = await apiService.postIncidencia(incidenciaData);
-      console.log('Nueva incidencia creada:', newIncidencia);
       alert("Nueva incidencia insertada para el medidor ", newIncidencia.meter_code)
       // Aquí puedes manejar el éxito de la creación, como mostrar una notificación o actualizar el estado
     } catch (error) {
       console.error('Error al crear incidencia:', error);
       if(error.incidencia_id){
         alert("Inserción cancelada, ese identificador ya existe")
-        console.log(error.incidencia_id)
       }else{
         alert("Error al crear la incidencia")
-        console.log("Otro error")
       }
       // Maneja el error, como mostrar un mensaje de error
       } finally {

@@ -57,15 +57,13 @@ const PopUpGestion = (
       } else {
       setFilterValue("");
       }
-      console.log("Valor autocomplete: ", value)
     }, []);
 
     //Funciones condicionales 
     //Función para obtener los gateways del autocomplete
     React.useMemo(() => {
   
-      //Al estar ejecutando el fetch activamos el loading de la data
-      console.log("FilterValue: ", filterValue)
+      //Al estar ejecutando el fetch activamos el loading de la dat
       if (filterValue.length > 0) {
         //setIsLoading(true);
         const fetchSuggestions = async () => {
@@ -165,7 +163,6 @@ const PopUpGestion = (
                             onSelectionChange={
                                 (key)=>{
                                     setGatewayPost(key)
-                                    console.log("gatewayPost: ", gatewayPost)
                                 }
                             }
 
@@ -236,7 +233,6 @@ const PopUpGestion = (
                                   ],
                                 }}
                               >
-                                {console.log("Creadores",statusCreators)}
                                 {statusCreators.map((column) => (
                                 <DropdownItem 
                                   key={column.name} 
@@ -266,7 +262,6 @@ const PopUpGestion = (
                               onClick={()=>{
                                 //setActivateStatus(true)
                                 setIsOpenCustomMessage(true);
-                                console.log("se oprime")
                               }}
                               >
                                 {value === 1 ? 'Online' : value === 0 ? 'Offline' : 'No Info'}

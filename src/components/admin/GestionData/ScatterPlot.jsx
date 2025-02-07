@@ -26,7 +26,6 @@ const ScatterPlot = ({selectedGateway}) => {
     const fetchData = async () => {
       try {
         // Obtener datos de la 
-        console.log("SelectedGateway: ", selectedGateway.anchorKey)
         const response = await apiService.getGatewayLogs(selectedGateway.anchorKey);
         const data = response.results;
   
@@ -38,9 +37,6 @@ const ScatterPlot = ({selectedGateway}) => {
         const labels = Array.from({ length: 24 }, (_, i) =>
           twentyFourHoursAgo.plus({ hours: i }).toFormat("yyyy-MM-dd HH:00")
         );
-
-        console.log("labels: ", labels)
-        console.log("Datos: ", data)
   
         // Filtrar datos recientes
         const recentData = data.filter((log) => {
@@ -58,7 +54,6 @@ const ScatterPlot = ({selectedGateway}) => {
         const lastStatus = lastLog ? lastLog.online_status : 0;
   
         // Construir datos del gráfico
-        console.log(lastStatus)
         const onlineStatusData = labels.map((label, index) => {
           const labelTime = DateTime.fromFormat(label, "yyyy-MM-dd HH:00").toISO();
           const logForHour = recentData.find(

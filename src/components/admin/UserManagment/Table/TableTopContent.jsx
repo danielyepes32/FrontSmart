@@ -115,14 +115,12 @@ export default function TableTopContent({
               user_name: nombre
           }
       ]
-  };
-
-    console.log("Datos de registro: ", UsuarioData)
+    };
 
     try {
       const newUser = await apiService.createUser(UsuarioData);
-      console.log('Nueva incidencia creada:', newUser);
-      alert("Nueva incidencia insertada para el medidor ", newUser)
+      alert("Nuevo usuario insertado con acceso a la plataforma", newUser)
+      window.location.reload();
       // Aquí puedes manejar el éxito de la creación, como mostrar una notificación o actualizar el estado
     } catch (error) {
       if(error.response.status === 400){
@@ -135,7 +133,6 @@ export default function TableTopContent({
         }
       }else{
         alert("Error al crear la incidencia")
-        console.log("Otro error")
       }
     }
   };

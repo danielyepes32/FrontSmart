@@ -79,68 +79,23 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
               }}
               onAction={(key) => {
                 switch (key) {
-                  case 'details':
-                    //console.log('Item 1 was selected.');
-                    setActionKey("details");
-                    //console.log("registro seleccionado", user.meter_id);
-                    setSelectedMeter(user)
-                    onOpen();
-                    // Aquí puedes agregar el código para ejecutar tu función para el item 1
-                    break;
-                  case 'edit':
-                    //console.log('Item 2 was selected.');
-                    setActionKey("edit")
-                    setSelectedMeter(user)
-                    onOpen()
-                    // Aquí puedes agregar el código para ejecutar tu función para el item 2
-                    break;
-                  case 'delete':
+                  case 'deleteUser':
                     //console.log('Item 3 was selected.');
-                    setActionKey("delete")
+                    setActionKey("deleteUser")
                     setSelectedMeter(user)
                     onOpen()
                     // Aquí puedes agregar el código para ejecutar tu función para el item 3
                     break;
-                  case 'ScaleAlarm':
-                    console.log("Entra a scatterPlot")
-                    setActionKey("ScaleAlarm")
-                    setSelectedMeter(user)
-                    onOpen()
-                    break;
-                  case 'ShowImage':
-                    setActionKey("ShowImage")
-                    setSelectedMeter(user)
-                    onOpen()
-                    break;
-                  case 'generateReport':
-                      setActionKey("generateReport")
-                      setSelectedMeter(user)
-                      onOpen()
-                      break;
                   default:
                     console.log('No function for this item.');
                 }
               }}
               >
               <DropdownItem
-                key='details'
-                className="hover:bg-default-100"
-              >Ver Detalles
-              </DropdownItem>
-              <DropdownItem
-                key='generateReport'
-                className={`hover:bg-default-100 ${user.tipo === "INCIDENCIA" ? '' : 'hidden'}`} //Esconder en caso de no ser un registro de tipo INCIDENCIA
-              >
-              Generar Reporte</DropdownItem>
-              <DropdownItem
-                key='ScaleAlarm'
-                className={`text-danger hover:bg-red-200 ${user.tipo === "INCIDENCIA" ? 'hidden' : ''}`} //Esconder en caso de ser un registro de tipo INCIDENCIA
+                key='deleteUser'
+                className={`text-danger`} //Esconder en caso de ser un registro de tipo INCIDENCIA
                 color="danger"
-              >Escalar a incidencia</DropdownItem>
-              <DropdownItem
-                key='ShowImage'
-                className={`hover:bg-default-100 ${user.tipo === "INCIDENCIA" ? '' : 'hidden'}`} //Esconder en caso de ser un registro de tipo INCIDENCIA
-              >Mostrar Imagen</DropdownItem>
+              >Eliminar usuario</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>

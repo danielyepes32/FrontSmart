@@ -36,7 +36,6 @@ const MapComponent = ({gatewaysData, metersData, loading}) => {
     }
 
     // Validar y agregar puntos de medición para metersData
-    console.log("Empieza a cargar puntos de medidores");
     if (Array.isArray(metersData)) {
       metersData.map((item) => {
         if (item.latitude !== null && item.longitude !== null) {
@@ -52,7 +51,6 @@ const MapComponent = ({gatewaysData, metersData, loading}) => {
     } else {
       console.error('meterData no es un array o está indefinido:', metersData);
     }
-    console.log("Termina de cargar los puntos de medidores");
 
     // Cleanup del mapa cuando el componente se desmonta
     return () => {

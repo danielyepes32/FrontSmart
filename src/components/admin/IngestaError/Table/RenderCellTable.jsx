@@ -16,7 +16,6 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
   switch (columnKey) {
     case "tipo":
       return (
-        console.log(user),
         //Creo un componente Chip de tipo dot porque estamos agregando un boton de estatus
         <Chip
           variant="dot"
@@ -103,7 +102,6 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
                     // Aquí puedes agregar el código para ejecutar tu función para el item 3
                     break;
                   case 'ScaleAlarm':
-                    console.log("Entra a scatterPlot")
                     setActionKey("ScaleAlarm")
                     setSelectedMeter(user)
                     onOpen()

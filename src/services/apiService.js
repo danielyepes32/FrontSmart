@@ -29,28 +29,32 @@ const withRetry = (fn) => {
 const getAll = withRetry(async (params) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`meters?format=json&${queryString}`, {withCredentials: true});
-    console.log(response.data);
     return response.data;
 });
+
+const deleteUserById = withRetry(async (userId) => {
+  const response = await axios.delete(`${baseUrl}users/delete-user/${userId}/`, {
+      withCredentials: true
+  });
+  return response.data;
+});
+
 
 //servicio para hacerle get a los valores de los medidores
 const getAllDescriptions = withRetry(async (params) => {
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`users/descriptions/?format=json&${queryString}`, {withCredentials: true});
-  console.log(response.data);
   return response.data;
 });
 
 const createUser = withRetry(async (data) =>
   {
-    console.log("Data: ", data)
     const response = await axios.post(baseUrl+`users/register/?format=json&`,data, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json"
       }
     });
-    console.log(response.data);
     return response.data;
   }
 )
@@ -59,7 +63,6 @@ const createUser = withRetry(async (data) =>
 const getCountOnlineGateways = withRetry(async (params) => {
     const queryString = new URLSearchParams(params).toString();
     const response = await axios.get(baseUrl+`gateways/count_gateways_online/?format=json&${queryString}`, {withCredentials: true});
-    console.log(response.data);
     return response.data;
 });
 
@@ -87,7 +90,6 @@ export const getGatewayData = async (endPoint, params, signal) => {
 export const getConteoIncidencias = withRetry(async (params) => { 
     const queryString = new URLSearchParams(params).toString(); 
     const response = await axios.get(`${baseUrl}incidencias/conteo-incidencias/?${queryString}`, {withCredentials: true}); 
-    console.log(response.data); 
     return response.data;
 });
 
@@ -108,7 +110,6 @@ export const getIncidencia = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`incidencias?format=json&${queryString}`, {withCredentials: true});
-  console.log(response.data);
   return response.data;
 });
 
@@ -117,7 +118,6 @@ const getAllAlarms = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`alarms?format=json&${queryString}`, {withCredentials: true});
-  console.log(response.data);
   return response.data;
 });
 
@@ -126,7 +126,6 @@ const getAllCombined = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`vista-combinada?format=json&${queryString}`, {withCredentials: true});
-  console.log(response.data);
   return response.data;
 });
 
@@ -179,7 +178,6 @@ const autocompleteMeters = async (params, signal) => {
       signal: signal || undefined,
       withCredentials: true
     });
-    console.log(response.data);
     return response.data;
 };
 
@@ -231,7 +229,6 @@ const autocompleteAlarms = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`alarms/autocomplete-alarma/?format=json&${queryString}`);
-  console.log(response.data);
   return response.data;
 });
 
@@ -243,7 +240,6 @@ const autocompleteCombined = async (params, signal) => {
       signal: signal || undefined,
       withCredentials: true
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     if (axios.isCancel(error)) {
@@ -262,7 +258,6 @@ const getTapas = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`unique-tapaDesc/?format=json&${queryString}`, {withCredentials: true});
-  console.log(response.data);
   return response.data;
 });
 
@@ -295,7 +290,6 @@ const getGateways = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`gateways/?format=json&${queryString}`,{withCredentials: true});
-  console.log(response.data);
   return response.data;
 });
 
@@ -304,7 +298,6 @@ const getGatewaysMysql = withRetry(async (params) => {
 
   const queryString = new URLSearchParams(params).toString();
   const response = await axios.get(baseUrl+`gateways/gateways_mysql/?format=json&${queryString}`,{withCredentials:true});
-  console.log(response.data);
   return response.data;
 });
 
@@ -356,5 +349,6 @@ export default {
   getConteoIncidencias,
   autocompleteGatewayMysql,
   getCountOnlineGateways,
-  createUser
+  createUser,
+  deleteUserById
 };

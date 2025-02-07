@@ -25,7 +25,6 @@ const BottomContent = ({
         showControls//{`${pages === 0 ? false : true}`}
         showShadow
       />
-      {console.log(page, pages)}
     </div>
   );
 };

@@ -131,7 +131,6 @@ const GestionData = ({ sidebar }) => {
     //console.log("Datos del nuevo gateway: ",newGatewayData)
     try {
       const newGateway = await apiService.postGateways(newGatewayData);
-      console.log('Nueva incidencia creada:', newGateway);
       //alert("Nuevo gateway creado ", newGateway.gateway_id)//setLoading(false);
       setIsVisible(true)
       setMessageFetch('Nuevo medidor agregado con exito al sistema')
@@ -142,7 +141,6 @@ const GestionData = ({ sidebar }) => {
         setIsVisible(true)
         setMessageFetch(`Inserción cancelada, el identificador ${newGatewayData.gateway_id} ya existe`)
         //alert("Inserción cancelada, ese identificador ya existe")
-        console.log(error.incidencia_id)
       }else{
         setIsVisible(true)
         setMessageFetch('Error inesperado, intente de nuevo')
@@ -300,7 +298,6 @@ const GestionData = ({ sidebar }) => {
       try {
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
         const gateways = await apiService.getGatewaysMysql(params);
-        console.log("Gateways",params)
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
         setArrayGateways(gateways["results"]);
       } catch (error) {
@@ -482,7 +479,6 @@ const GestionData = ({ sidebar }) => {
   },[isVisible])
 
   const mapContainerMemo = React.useMemo(() => {
-    console.log("Cambio gateways Data", arrayGateways)
     return(
       <>
       <MapContainer
