@@ -6,7 +6,7 @@ const PaginationInfo = ({ usersLength, onRowsPerPageChange }) => {
   return (
     <div className="flex justify-between items-center mt-4">
       <span className="text-default-400 text-small">
-        Hay un total de {usersLength} incidencias registradas en el sistema
+        Hay un total de {usersLength} alarmas registradas en el sistema
       </span>
       <label className="flex items-center text-default-400 text-small">
         Registros por página:

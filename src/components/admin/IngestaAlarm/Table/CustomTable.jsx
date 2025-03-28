@@ -106,7 +106,7 @@ const CustomTable = ({
         
         {!isLoading ? (item) => (
           <TableRow 
-            key={item.incidencia_id}
+            key={item.alarm_id}
             >
             {(columnKey) => 
             <TableCell

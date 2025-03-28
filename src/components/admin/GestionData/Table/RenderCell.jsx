@@ -1,23 +1,20 @@
 const RenderCell = () => {
-            const cellValue = user[columnKey];
-      
-        
+          const cellValue = user[columnKey];
           //Realizar diferentes acciones dependiendo de la columkey
           switch (columnKey) {
               case "last_update_time":
-                // Crear un objeto de fecha a partir del string
-                const date = new Date(cellValue);
-      
-                // Obtener los componentes de la fecha
+                const date = new Date(cellValue); // No se usa getUTC* para respetar la hora original
+                date.setHours(date.getHours() + 5); // Sumar 5 horas
+              
+                // Formatear manualmente
                 const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
-                const day = String(date.getDate()).padStart(2, '0');
-                const hours = String(date.getHours()).padStart(2, '0');
-                const minutes = String(date.getMinutes()).padStart(2, '0');
-                const seconds = String(date.getSeconds()).padStart(2, '0');
-      
-                // Formatear la fecha en el formato deseado
-                return cellValue ? `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`: null;
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                const hours = String(date.getHours()).padStart(2, "0");
+                const minutes = String(date.getMinutes()).padStart(2, "0");
+                const seconds = String(date.getSeconds()).padStart(2, "0");
+              
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
               case "online_status":
                 return (
                   //Creo un componente Chip de tipo dot porque estamos agregando un boton de estatus

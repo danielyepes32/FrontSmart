@@ -1,9 +1,12 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { RiDashboardLine, RiLogoutBoxLine } from 'react-icons/ri';
 import React, { useState, useEffect } from 'react';
+import { RiAlarmWarningLine } from "react-icons/ri";
 import { PiWarningOctagonBold } from "react-icons/pi";
 import { MdOutlineDataSaverOn } from "react-icons/md";
 import { VscAccount } from "react-icons/vsc";
+import { TbStatusChange } from "react-icons/tb";
+
 
 const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
   const location = useLocation();
@@ -11,6 +14,7 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
   const [activeLink, setActiveLink] = useState("/admin/dashboard");
   const [showSubmenu, setShowSubmenu] = useState(false); // Estado para mostrar/ocultar submenú
   const [showSubmenuGateway, setShowSubmenuGateway] = useState(false); // Estado para mostrar/ocultar submenú
+  const [showSubmenuEstados, setShowSubmenuEstados] = useState(false); // Estado para mostrar/ocultar submenú
 
   // Redirigir si la URL actual es /admin
   useEffect(() => {
@@ -37,13 +41,25 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
   // Función para manejar el click en Gestión de Data y alternar el submenú
   const handleGestionClick = () => {
     setShowSubmenu(!showSubmenu) // Alterna el estado del submenú
-    !showSubmenu === true ? setShowSubmenuGateway(false) : null
+    !showSubmenu === true ? handleCloseMenus("medidores") : null
   };
+
+  // Función para manejar el click en Gestión de Data y alternar el submenú
+  const handleGestionClickEstado = () => {
+    setShowSubmenuEstados(!showSubmenuEstados) // Alterna el estado del submenú
+    !showSubmenuEstados === true ? handleCloseMenus("estados") : null
+  };
+
+  const handleCloseMenus = (value) => {
+    value === 'medidores' ? null: setShowSubmenu(false); // Cierra el submenú de gestión de datos
+    value === 'gateway' ? null: setShowSubmenuGateway(false); // Cierra el submenú de gestión de dispositivos
+    value === 'estados' ? null: setShowSubmenuEstados(false); // Cierra el submenú de gestión de estados
+  }
 
   // Función para manejar el click en Gestión de Data y alternar el submenú
   const handleGestionClickGateway = () => {
     setShowSubmenuGateway(!showSubmenuGateway); // Alterna el estado del submenú
-    !showSubmenuGateway === true ? setShowSubmenu(false) : null
+    !showSubmenuGateway === true ? handleCloseMenus("gateway") : null
   };
 
   return (
@@ -109,18 +125,45 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
                     </ul>
                   </div>
                 </li>
-
                 <li>
-                  <NavLink
-                    to="/admin/error"
-                    className={({ isActive }) => generateLinkClasses(isActive)}
-                    onClick={() => handleLinkClick("/admin/error")}
+                  <div
+                    className='tracking-custom font-poppins font-regular flex items-center justify-left gap-2 p-3 px-6 transition-all duration-500 ease-in-out transform border-transparent text-black-menu hover:font-bold hover:border-blue-400 hover:text-blue-400 hover:translate-x-2'
+                    onClick={() => handleGestionClickEstado()}
                   >
-                    <PiWarningOctagonBold />
-                    Errores
-                  </NavLink>
-                </li>
+                    <TbStatusChange />
+                    Gestión de estados
+                  </div>
 
+                  {/* Submenú con animación */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      showSubmenuEstados ? 'max-h-40' : 'max-h-0'
+                    }`}
+                  >
+                    <ul className="pl-8">
+                      <li>
+                        <NavLink
+                          to="/admin/error"
+                          className={({ isActive }) => generateLinkClasses(isActive)}
+                          onClick={() => handleLinkClick("/admin/error")}
+                        >
+                          <PiWarningOctagonBold />
+                          Errores
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/admin/alarmas"
+                          className={({ isActive }) => generateLinkClasses(isActive)}
+                          onClick={() => handleLinkClick("/admin/error")}
+                        >
+                          <RiAlarmWarningLine />
+                          Alarmas
+                        </NavLink>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
                 {/* Gestión de Data con submenú animado */}
                 <li>
                   <div

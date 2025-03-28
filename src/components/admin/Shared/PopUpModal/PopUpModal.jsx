@@ -5,6 +5,7 @@ import {
 } from "@nextui-org/react";
 import apiService from '../../../../services/apiService';
 import { columnsStatus } from '../../../../utils/tests/data';
+import { columnsError } from '../../../../utils/tests/data';
 //Libreria para hacer un parse a los datos de tipo fecha
 import {parseAbsoluteToLocal} from "@internationalized/date";
 //Importar luxon para poder agregar zona horaria a un dato de tipo Fecha
@@ -23,6 +24,7 @@ import GenerateReport from './PopUpModalContent/GenerateReport';
 
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
 const INITIAL_VISIBLE_COLUMNS = ["alarm_pk", "meter_code", "falla_desc","falla_type","alarm_date"];
+const INITIAL_VISIBLE_ERROR_COLUMNS = ["incidencia_id", "meter_code", "falla_desc","encargado","fecha_incidencia"];
 
 const PopUpModal = ({ 
     isOpenUpdate, 
@@ -45,6 +47,8 @@ const PopUpModal = ({
     });
         //Variable para guardar el tamaño del conteo de medidores totales puesto que los datos se traen por pagination
   const [metersLength, setMetersLength] = React.useState(0);
+  //Variable que define si se mostraran datos de alarma o de incidencia
+  const [showType, setShowType] = React.useState(false);
   //Variable que establece qué numero del pagination que se encuentra activa
   const [page, setPage] = React.useState(1);
   //En esta variable se guardan los nombre de creadores para los cuales se hará el filtrado en la consulta
@@ -152,6 +156,8 @@ const PopUpModal = ({
             {cellValue}
           </Chip>
         );
+      case "fecha_incidencia":
+        return new Date(cellValue).toISOString().split("T")[0]
       default:
         return cellValue;
     }
@@ -211,7 +217,7 @@ const PopUpModal = ({
 
       };
       //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
-      const initialMeters = await apiService.getAllAlarms(params);
+      const initialMeters = showType === false ? await apiService.getAllAlarms(params) : await apiService.getIncidencia(params);
       //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
       setMeters(initialMeters["results"]);
       //usamos el componente "count" de la consulta para establecer el tamaño de los registros
@@ -228,15 +234,14 @@ const PopUpModal = ({
         // Otro tipo de error
         console.error('Error:', error.message);
       }
-    } finally {
+    }
       //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
       setIsLoading(false);
-    }
   };
   fetchData();
   }
   //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
-}, [page, rowsPerPage, sortDescriptor, statusSelection , statusFilter, date, meter.meter_code, isOpen]);
+}, [page, rowsPerPage, sortDescriptor, statusSelection , statusFilter, date, meter.meter_code, isOpen, showType, activateStatus]);
 //La consulta de las alarmas se establece al cambiar la pagina, el tamaño de la pagina, el parametro ordering de los datos,
 //el estatus de las alarmas que en este caso se refiere a si la falla es externa o interna, la seleccion de fallas y solo cuando el autocomplete es falso
 
@@ -355,25 +360,38 @@ const PopUpModal = ({
 
 
     const TablePopUpStatus = React.useMemo(()=>{
-      return (
+      return !isLoading?(
         <TableInfo
           topContent = {topContent}
           bottomContent = {bottomContent}
           sortDescriptor = {sortDescriptor}
           setSortDescriptor = {setSortDescriptor}
-          headerColumns = {headerColumns}
+          headerColumns = {showType === false ? headerColumns : columnsError}
           metersFetch = {metersFetch}
           renderCell = {renderCell}
           loadingState = {loadingState}
           isLoading = {isLoading}
+          showType={showType}
         />
+      ): (
+        <div className="flex flex-col justify-center items-center w-full h-full my-10">
+          <span className='pb-3'>Cargando datos</span>
+          <div className="w-12 h-12 border-4 border-custom-blue border-t-transparent rounded-full animate-spin"></div>
+        </div>
       )
-    })
+    },[isLoading])
     
     const renderContent = (key) => {
       switch(key) {
         case 'details':
-          return <MeterDetails meter={meter} onOpen={onOpen} setActivateStatus={setActivateStatus}/>;
+          return (
+            <MeterDetails 
+              meter={meter} 
+              onOpen={onOpen} 
+              setActivateStatus={setActivateStatus}
+              setShowType={setShowType}
+              />
+            );
         case 'edit':
         return (
           <MeterEdit
@@ -515,6 +533,7 @@ const PopUpModal = ({
       setMessageFetch={setMessageFetch}
       fetchUpdateMeterData={fetchUpdateMeterData}
       TablePopUpStatus={TablePopUpStatus}
+      setShowType={setShowType}
     />
     </div>
   );

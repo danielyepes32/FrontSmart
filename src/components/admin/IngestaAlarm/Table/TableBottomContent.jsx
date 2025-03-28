@@ -15,12 +15,11 @@ const BottomContent = ({
       <Pagination
         classNames={{
           wrapper:"mx-1 my-1.5",
-          item: "",
+          item: "w-auto",
           cursor: "bg-custom-blue w-auto shadow-lg text-white font-bold transition-all duration-300 ease-in-out",
           chevronNext: "transform rotate-180",
         }}
         boundaries={3}
-        isDisabled={hasSearchFilter}
         page={page}
         size="lg"
         className="gap-2 space-x-8"
@@ -31,10 +30,10 @@ const BottomContent = ({
         showShadow
       />
       {/*console.log(page, pages)*/}
-      <span className="text-medium text-center text-black "> 
+      <span className="text-small text-default-400 text-custom-blue">
         {selectedKeys === "all"
-          ? "Todos los medidores han sido seleccionados"
-          : `${selectedKeys.size} de ${itemsLength} medidores seleccionados`}
+          ? "All items selected"
+          : `${selectedKeys.size} de ${itemsLength} alarmas eleccionadas`}
       </span>
     </div>
   );

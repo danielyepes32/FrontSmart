@@ -26,9 +26,12 @@ const withRetry = (fn) => {
 };
 
 //servicio para hacerle get a los valores de los medidores
-const getAll = withRetry(async (params) => {
+const getAll = withRetry(async (params, signal) => {
     const queryString = new URLSearchParams(params).toString();
-    const response = await axios.get(baseUrl+`meters?format=json&${queryString}`, {withCredentials: true});
+    const response = await axios.get(baseUrl+`meters?format=json&${queryString}`, {
+      withCredentials: true,
+      signal: signal || undefined // Pasar la señal de aborto
+    });
     return response.data;
 });
 
@@ -106,18 +109,25 @@ export const downloadTemplate = withRetry(async () => {
 });
 
 // Servicio para crear una nueva incidencia
-export const getIncidencia = withRetry(async (params) => {
+export const getIncidencia = withRetry(async (params, signal) => {
 
   const queryString = new URLSearchParams(params).toString();
-  const response = await axios.get(baseUrl+`incidencias?format=json&${queryString}`, {withCredentials: true});
+  const response = await axios.get(baseUrl+`incidencias?format=json&${queryString}`, 
+    {
+      withCredentials: true,
+      signal: signal || undefined // Pasar la señal de aborto
+    });
   return response.data;
 });
 
 //servicio para hacerle get a los valores de los medidores
-const getAllAlarms = withRetry(async (params) => {
+const getAllAlarms = withRetry(async (params, signal) => {
 
   const queryString = new URLSearchParams(params).toString();
-  const response = await axios.get(baseUrl+`alarms?format=json&${queryString}`, {withCredentials: true});
+  const response = await axios.get(baseUrl+`alarms?format=json&${queryString}`, {
+    withCredentials: true,
+    signal: signal || undefined // Pasar la señal de aborto
+  });
   return response.data;
 });
 
@@ -225,11 +235,23 @@ const autocompleteGatewayMysql = async (params, signal) => {
 };
 
 //Servicio para generar el autocomplete de las alarmas
-const autocompleteAlarms = withRetry(async (params) => {
-
-  const queryString = new URLSearchParams(params).toString();
-  const response = await axios.get(baseUrl+`alarms/autocomplete-alarma/?format=json&${queryString}`);
+const autocompleteAlarms = withRetry(async (params, signal) => {
+    const queryString = new URLSearchParams(params).toString();
+    const response = await axios.get(baseUrl+`alarms/autocomplete-alarma/?format=json&${queryString}`,{
+      signal: signal || undefined,
+      withCredentials: true
+    });
   return response.data;
+});
+
+//Servicio para generar el autocomplete de las alarmas
+const autocompleteIncidencias = withRetry(async (params, signal) => {
+  const queryString = new URLSearchParams(params).toString();
+  const response = await axios.get(baseUrl+`incidencias/autocomplete-incidencias/?format=json&${queryString}`,{
+    signal: signal || undefined,
+    withCredentials: true
+  });
+return response.data;
 });
 
 //Servicio para generar el autocomplete de las alarmas
@@ -350,5 +372,6 @@ export default {
   autocompleteGatewayMysql,
   getCountOnlineGateways,
   createUser,
-  deleteUserById
+  deleteUserById,
+  autocompleteIncidencias
 };

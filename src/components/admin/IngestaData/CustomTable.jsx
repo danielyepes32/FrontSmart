@@ -28,7 +28,8 @@ const CustomTable = ({
   popUp,
   setActionKey,
   setSelectedMeter,
-  onOpen
+  onOpen,
+  theresError,
 }) => {
 
   //configuración tailwind para los componentes de la tabla de nextUI
@@ -38,7 +39,8 @@ const CustomTable = ({
       th: ["bg-transparent", "text-default-500", "border-b", "border-divider","text-center"],
       td: [ 
         //Agregar las celdas en la mitad del componente
-        "align-middle text-center",
+        "align-middle text-center ",
+        `${loadingState === 'loading' ? "opacity-0" : ""}`,
         // changing the rows border radius
         // first
         "group-data-[first=true]:first:before:rounded-none",
@@ -50,7 +52,7 @@ const CustomTable = ({
         "group-data-[last=true]:last:before:rounded-none",
       ],
     }),
-    [],
+    [loadingState, isLoading],
   );
 
   return (
@@ -93,20 +95,30 @@ const CustomTable = ({
             emptyContent="No se encontraron medidores"
             items={meters}
             loadingContent={
-              <Spinner 
-                label="Obteniendo Datos"
-                className="flex top-[200px]"
-              />
+              theresError ? (
+                <div className="flex flex-col items-center justify-center mt-5 pt-10 text-red-500">
+                    <ExclamationCircleIcon className="w-10 h-10 mb-2" />
+                    <p>Error al obtener los datos</p>
+                </div>
+              ) : (
+                  <Spinner 
+                      label="Obteniendo Datos"
+                      className="flex h-full items-center justify-center mt-5 pt-10"
+                  />
+              )
             }
             loadingState={loadingState}
-            isLoading={isLoading}
+            isLoading={false}
           >
             {(item) => (
-              <TableRow key={item.meter_id}>
+              <TableRow 
+                key={item.meter_id}
+                >
                 {(columnKey) => (
                   <TableCell
                     className="selected-text"
                     onMouseDown={(e) => e.stopPropagation()} 
+                    onPointerDown={(e) => e.stopPropagation()} 
                   >
                     {renderCell(item, columnKey, setActionKey, setSelectedMeter, onOpen) === null 
                         ? 'NO DATA' 

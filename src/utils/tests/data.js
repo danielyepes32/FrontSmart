@@ -1,15 +1,39 @@
 const columns = [
-  {name: "ID MEDIDOR", uid: "meter_id", sortable: true},
-  {name: "CODIGO MEDIDOR", uid: "meter_code", sortable: true},
-  {name: "TIPO DE MEDIDOR", uid: "meter_type", sortable: true},
-  {name: "CREADOR", uid: "creator", sortable: true},
-  {name: "FECHA INSTALACION", uid: "create_date", sortable: true},
-  {name: "LATITUDE", uid : "latitude", sortable: true},
-  {name: "LONGITUDE",uid : "longitude", sortable: false},
-  {name: "ESTATUS", uid : "status", sortable : true},
-  {name: "TAPA", uid : "tapa_desc", sortable: true},
+  {name: "ID CLIENTE", uid: "meter_id", sortable: true},
+  {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
+  {name: "USUARIO", uid: "creator", sortable: true},
+  {name: "FECHA REGISTRO", uid: "create_date", sortable: true},
+  {name: "CONDICION", uid : "status", sortable : true},
   {name: "ACCION", uid : "actions", sortable: true},
 ];
+
+const columnsError = [
+  {name: "ID", uid: "incidencia_id", sortable: true},
+  {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
+  {name: "FALLA", uid: "falla_desc", sortable: true},
+  {name: "ENCARGADO", uid: "encargado", sortable: true},
+  {name: "FECHA DE REPORTE", uid: "fecha_incidencia", sortable: true},
+]
+
+const columnsAlarmsFetch = [
+  {name: "ID", uid: "alarm_id", sortable: true},
+  {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
+  {name: "FALLA", uid: "falla_desc", sortable: true},
+  {name: "CATEGORIA ALARMA", uid: "falla_type", sortable: true},
+  {name: "TIPO", uid: "tipo", sortable: true},
+  {name: "FECHA DE REPORTE", uid: "alarm_date", sortable: true},
+  {name: "ACCION", uid: "actions", sortable: true},
+]
+
+const columnsErrorFetch = [
+  {name: "ID", uid: "incidencia_id", sortable: true},
+  {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
+  {name: "FALLA", uid: "falla_desc", sortable: true},
+  {name: "ENCARGADO", uid: "encargado", sortable: true},
+  {name: "CATEGORIA", uid: "tipo", sortable: true},
+  {name: "FECHA DE REPORTE", uid: "fecha_incidencia", sortable: true},
+  {name: "ACCION", uid: "actions", sortable: true},
+]
 
 const userColumns = [
   {name: "CODIGO DE USUARIO", uid: "owner_username", sortable: true},
@@ -60,4 +84,4 @@ const columsGatewayLogs = [
   {name: "ESTATUS", uid : "online_status", sortable: true}
 ];
 
-export {columns, userColumns, statusOptions, columnsAlarms, columnsStatus, columnsGateways, columsGatewayLogs};
+export {columns, columnsErrorFetch, columnsError, userColumns, statusOptions, columnsAlarmsFetch, columnsAlarms, columnsStatus, columnsGateways, columsGatewayLogs};

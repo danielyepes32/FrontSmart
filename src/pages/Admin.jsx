@@ -13,6 +13,7 @@ import PowerView from './admin/PowerBI';
 import DashboardMain from './admin/DashboardMain';
 import AccounManagment from './admin/userManagment';
 import apiService from '../services/apiService';
+import IngestaAlarma from './admin/IngestAlarm';
 
 const Admin = () => {
 
@@ -75,6 +76,7 @@ const Admin = () => {
         <Route path="/upload" element={<FileUpload sidebar={sidebar} />} />
         <Route path="/gateways/*" element={<DashboardMain sidebar={sidebar} />} />
         <Route path="/power_view" element={<PowerView sidebar={sidebar} />} />
+        <Route path="/alarmas" element={<IngestaAlarma sidebar={sidebar} />} />
         <Route
           path="/accountManagment"
           element={isSuperUser ? <AccounManagment sidebar={sidebar} /> : isAuthenticated ? null : <Navigate to="/" replace />}

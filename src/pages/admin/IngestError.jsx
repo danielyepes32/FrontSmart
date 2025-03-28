@@ -2,7 +2,7 @@
 import React from "react";
 //Libreria usada para establecer el maneja de ventanas emergentes modal
 import {useDisclosure} from "@nextui-org/react";
-import {columnsAlarms} from "../../utils/tests/data"  //"../../utils/tests/data";
+import {columnsErrorFetch} from "../../utils/tests/data"  //"../../utils/tests/data";
 //Componente de Servicio para conexiones con la API
 import apiService from "../../services/apiService";
 //Eventos de cambio de variables constant
@@ -16,10 +16,8 @@ import { DateTime } from 'luxon';
 
 import CustomTable from "../../components/admin/IngestaError/Table/CustomTable";
 
-
-
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
-const INITIAL_VISIBLE_COLUMNS = ["id", "meter_code", "falla_desc","tipo","fecha", "falla_type","actions"];
+const INITIAL_VISIBLE_COLUMNS = ["incidencia_id", "meter_code", "falla_desc","encargado", "tipo","fecha_incidencia","actions"];
 
 //Aquí empieza la funcionalidad de la vista IngestaAdmin.jsx
 export default function IngestaAdmin(sidebar) {
@@ -52,7 +50,10 @@ export default function IngestaAdmin(sidebar) {
   //Esta variable se usa para guardar todas las descripciones de fallas
   const [fallaDesc, setFallaDesc] = React.useState([]);
   //Constante usada para definir si se estan cargando los datos o si en su defecto simplemente no hay datos en la consulta
-  const loadingState = isLoading === true & metersLength === 0 ? "loading" : "idle";
+  const loadingState = React.useMemo(()=>{
+    const answer = isLoading === true ? "loading" : "idle";
+    return answer
+  },[isLoading, meters]) 
   //Constante para establecer si se esta ejecutando el autocomplete
   const [filterValue, setFilterValue] = React.useState("");
   //constante con los id de los medidores seleccionados
@@ -80,9 +81,12 @@ export default function IngestaAdmin(sidebar) {
     //En caso de que no se esté ejecutando el autocomplete (podría mejorar implementando haSearcFilter)
     if(filterValue === ""){
     //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
+    setIsLoading(true);
+    const controller = new AbortController(); // Crear un AbortController
+    const signal = controller.signal; // Obtener la señal
+
     const fetchData = async () => {
       //Al estar ejecutando el fetch activamos el loading de la data
-      setIsLoading(true);
       //Inicializar la variable fuera del bloque condicional
       let falla_type_string = '';
       let falla_desc_string = '';
@@ -119,12 +123,11 @@ export default function IngestaAdmin(sidebar) {
 
         };
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
-        const initialMeters = await apiService.getAllCombined(params);
-        
+        const initialMeters = await apiService.getIncidencia(params, signal);
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
-        setMeters(initialMeters["results"]);
+        setMeters(initialMeters ? initialMeters["results"] : []);
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-        setMetersLength(initialMeters["count"]);
+        setMetersLength(initialMeters ? initialMeters["count"] : []);
       } catch (error) {
         // En caso de error en el llamado a la API se ejecuta un console.error
         if (error.response) {
@@ -137,12 +140,18 @@ export default function IngestaAdmin(sidebar) {
           // Otro tipo de error
           console.error('Error:', error.message);
         }
-      } finally {
-        //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
-        setIsLoading(false);
       }
+        //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
+        if (!signal.aborted) {
+          setIsLoading(false); // Solo desactiva el loading si la solicitud no fue abortada
+        }
     };
     fetchData();
+
+    return () => {
+      console.warn("Cancelando solicitud anterior...");
+      controller.abort(); // Cancelar la solicitud anterior antes de hacer una nueva
+    };
     //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
     }
 
@@ -267,7 +276,7 @@ export default function IngestaAdmin(sidebar) {
           page_size : rowsPerPage
         };
 
-          const response = await apiService.autocompleteCombined(params, signal);
+          const response = await apiService.autocompleteIncidencias(params, signal);
           setMeters(response["results"]);
           //usamos el componente "count" de la consulta para establecer el tamaño de los registros
           setMetersLength(response["count"]);
@@ -276,7 +285,7 @@ export default function IngestaAdmin(sidebar) {
           console.error('Error fetching initial meters:', error);
         } finally {
           //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
-          setIsLoading(false);
+          !signal.aborted ? setIsLoading(false): null;
           //console.log("salio");
         }
       };
@@ -302,9 +311,9 @@ export default function IngestaAdmin(sidebar) {
   //Esta función se usa para calcular las columnas que se etsablecen como visibles
   const headerColumns = React.useMemo(() => {
 
-    if (visibleColumns === "all") return columnsAlarms;
+    if (visibleColumns === "all") return columnsErrorFetch;
 
-    return columnsAlarms.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columnsErrorFetch.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);//Se ejecuta cada que hay un cambio en la constante vsisibleColumns
 
   
@@ -387,7 +396,7 @@ export default function IngestaAdmin(sidebar) {
         statusOptions={fallaType}
         visibleColumns={visibleColumns}
         setVisibleColumns={setVisibleColumns}
-        columns={columnsAlarms}
+        columns={columnsErrorFetch}
         users={meters}
         haFilterSelect={hasSearchFilter}
         usersLength = {metersLength}

@@ -27,7 +27,7 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
           }}
           className="capitalize gap-4"
         >
-          {cellValue}
+          {cellValue == 'NO OPERATIVO' ? 'RETIRADO DE PLATAFORMA': cellValue} 
         </Chip>
       );
 
@@ -93,8 +93,7 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
       default:
         return (
           <span
-            onMouseDown={(e) => e.stopPropagation()} 
-            onPointerDown={(e) => e.stopPropagation()} 
+            className='space-x-2'
             >
               {cellValue}
           </span>

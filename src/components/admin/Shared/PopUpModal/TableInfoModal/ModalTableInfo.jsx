@@ -17,6 +17,7 @@ const ModalTableInfo = ({
     setMessageFetch,
     fetchUpdateMeterData,
     TablePopUpStatus,
+    setShowType,
   }) => {
     return (
       <Modal

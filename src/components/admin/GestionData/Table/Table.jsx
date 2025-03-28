@@ -70,7 +70,7 @@ const TableComponent = (
           case "last_update_time":
             // Crear un objeto de fecha a partir del string
             const date = new Date(cellValue);
-  
+            date.setHours(date.getHours() + 5); // Sumar 5 horas
             // Obtener los componentes de la fecha
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
@@ -191,7 +191,15 @@ const TableComponent = (
               </div>
             );
           default:
-            return <span className='whitespace-pre-wrap break-words'>{cellValue}</span>;
+            return (
+              <span 
+                onMouseDown={(e) => e.stopPropagation()} 
+                onPointerDown={(e) => e.stopPropagation()} 
+                className='whitespace-pre-wrap break-words'
+                >
+                  {cellValue}
+              </span>
+            )
         }
       }, []);
 
@@ -244,10 +252,14 @@ const TableComponent = (
             isLoading={isLoading}
             >
             {!isLoading ? (item) => (
-              <TableRow 
+              <TableRow
                 key={item.equip_id}
                 >
-                {(columnKey) => <TableCell>{renderCell(item, columnKey) === null ? 'NO DATA': renderCell(item, columnKey)}</TableCell>}
+                {(columnKey) => <TableCell onMouseDown={(e) => e.stopPropagation()} >
+                    {
+                      renderCell(item, columnKey) === null ? 'NO DATA': renderCell(item, columnKey)
+                    }
+                    </TableCell>}
               </TableRow>
             ):null}
           </TableBody>

@@ -129,8 +129,7 @@ const PopUpGestion = (
                       <div className='flex-col grid place-items-center w-full'>
                       {/*Segunda Columna*/}
                         <div className="mx-auto w-full">
-                          <label className={`mb-0.5 text-lg font-semibold mx-auto`}>Serial del nuevo gateway</label>
-                          
+                          <label className={`mb-0.5 text-lg font-semibold mx-auto`}>Serial del nuevo gateway</label> 
                           <Autocomplete 
                             className="w-full bg-gray-100 rounded-xl" 
                             onInputChange={onSearchChange}

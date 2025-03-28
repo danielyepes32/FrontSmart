@@ -31,7 +31,8 @@ const ScatterPlot = ({selectedGateway}) => {
   
         // Hora actual y hace 24 horas
         const now = DateTime.now().setZone("America/Lima");
-        const twentyFourHoursAgo = now.minus({ hours: 24 });
+        const nextHour = now.plus({ hours: 1 }).startOf("hour");
+        const twentyFourHoursAgo = nextHour.minus({ hours: 24 });
   
         // Generar etiquetas de horas para las últimas 24 horas
         const labels = Array.from({ length: 24 }, (_, i) =>
@@ -40,41 +41,42 @@ const ScatterPlot = ({selectedGateway}) => {
   
         // Filtrar datos recientes
         const recentData = data.filter((log) => {
-          const logTime = DateTime.fromISO(log.status_time, {
-            zone: "America/Lima",
-          });
+          const logTime = DateTime.fromISO(log.status_time).plus({hours: 5});
           return logTime >= twentyFourHoursAgo && logTime <= now;
         });
   
-        // Inicializar estado previo en "1" (encendido)
-        let previousStatus = 1;
+        console.log("RecentData", recentData);
   
         // Detectar si el último estado es "Online"
         const lastLog = recentData[recentData.length - 1];
         const lastStatus = lastLog ? lastLog.online_status : 0;
   
+        const value = data.find(record => 
+          DateTime.fromISO(record.status_time).plus({hours: 5}) <= twentyFourHoursAgo
+        ) || null;        
+        // Inicializar estado previo en "1" (encendido)
+        let previousStatus = value ? value.online_status === true ? 1 : 0 : 1;
+
         // Construir datos del gráfico
         const onlineStatusData = labels.map((label, index) => {
           const labelTime = DateTime.fromFormat(label, "yyyy-MM-dd HH:00").toISO();
           const logForHour = recentData.find(
             (log) =>
-              DateTime.fromISO(log.status_time, { zone: "America/Lima" }).toFormat(
-                "yyyy-MM-dd HH:00"
-              ) === label
+              DateTime.fromISO(log.status_time)
+                .plus({ hours: 5 }) // Suma 5 horas
+                .toFormat("yyyy-MM-dd HH:00") === label
           );
+
+          //console.log("logForHour", logForHour?.status_time, "labelTime", label);
   
           if (logForHour) {
             // Actualizar estado si hay un registro
-            previousStatus = logForHour.online_status ? 1 : 0;
+            previousStatus = logForHour.online_status === true ? 1 : 0;
           }
           
           
           // Si el último registro es "Online" y la hora actual es posterior, mantenemos el estado "Online" (1)
-          if (lastStatus === true) {
-            if (DateTime.fromFormat(label, "yyyy-MM-dd HH:00") > DateTime.fromISO(lastLog.status_time, { zone: "America/Lima" })) {
-              previousStatus = 1; // Mantener estado Online
-            }
-          }
+
   
           return previousStatus;
         });

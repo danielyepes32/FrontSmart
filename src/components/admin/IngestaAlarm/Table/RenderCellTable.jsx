@@ -1,7 +1,6 @@
 import React from 'react';
 import { Chip, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import { VerticalDotsIcon } from '../../Shared/Icons/VerticalDotsIcon';
-import { DateTime } from 'luxon';
 
 //Ejemplo para darle color a un estatus específico
 const statusColorMap = {
@@ -26,20 +25,13 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
               base: "w-auto h-auto",
               content: "px-1",
               //le doy un tamaño al punto, en este caso con un padding de 1 y un color de bg en este caso caracterizado por el mapeo del estatus key
-              dot: `p-1 bg-red-500`
+              dot: `p-1 bg-yellow-500`
           }}
           className="capitalize gap-4"
         >
-          INCIDENCIA
+          ALARMA
         </Chip>
       );
-    case "fecha_incidencia":
-
-      
-
-      return (
-        <span>{DateTime.fromISO(cellValue).toFormat("yyyy-MM-dd")}</span>
-      )
     case "actions":
       return (
         <div className="relative flex justify-center items-center text-center gap-5">
@@ -136,17 +128,17 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
               </DropdownItem>
               <DropdownItem
                 key='generateReport'
-                className={`hover:bg-default-100`} //Esconder en caso de no ser un registro de tipo INCIDENCIA
+                className={`hover:bg-default-100 ${user.tipo === "INCIDENCIA" ? '' : 'hidden'}`} //Esconder en caso de no ser un registro de tipo INCIDENCIA
               >
               Generar Reporte</DropdownItem>
-              {/*<DropdownItem
+              <DropdownItem
                 key='ScaleAlarm'
                 className={`text-danger hover:bg-red-200 ${user.tipo === "INCIDENCIA" ? 'hidden' : ''}`} //Esconder en caso de ser un registro de tipo INCIDENCIA
                 color="danger"
-              >Escalar a incidencia</DropdownItem>*/}
+              >Escalar a incidencia</DropdownItem>
               <DropdownItem
                 key='ShowImage'
-                className={`hover:bg-default-100`} //Esconder en caso de ser un registro de tipo INCIDENCIA
+                className={`hover:bg-default-100 ${user.tipo === "INCIDENCIA" ? '' : 'hidden'}`} //Esconder en caso de ser un registro de tipo INCIDENCIA
               >Mostrar Imagen</DropdownItem>
             </DropdownMenu>
           </Dropdown>

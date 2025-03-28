@@ -33,7 +33,7 @@ const BottomContent = ({
       <span className="text-small text-default-400 text-custom-blue">
         {selectedKeys === "all"
           ? "All items selected"
-          : `${selectedKeys.size} of ${itemsLength} selected`}
+          : `${selectedKeys.size} de ${itemsLength} incidencias eleccionadas`}
       </span>
     </div>
   );

@@ -20,7 +20,8 @@ const TableInfo = (
         metersFetch,
         renderCell,
         loadingState,
-        isLoading
+        isLoading,
+        showType,
     }
     ) => {
     //configuración tailwind para los componentes de la tabla de nextUI
@@ -89,7 +90,7 @@ const TableInfo = (
         >
         {(item) => (
             <TableRow 
-            key={item.alarm_pk}
+            key={showType === false ? item.alarm_pk : item.incidencia_id}
             >
             {(columnKey) => <TableCell>{renderCell(item, columnKey) === null ? 'NO DATA': renderCell(item, columnKey)}</TableCell>}
             </TableRow>

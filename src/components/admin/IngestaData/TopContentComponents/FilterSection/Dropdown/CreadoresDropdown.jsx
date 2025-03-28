@@ -1,9 +1,11 @@
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from '@nextui-org/react';
-import { ChevronDownIcon } from '../../../../Shared/Icons/ChevronDownIcon';
-import { FaCheck } from 'react-icons/fa';
-import { capitalize } from '../../../../../../utils/utils';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import { ChevronDownIcon } from "../../../../Shared/Icons/ChevronDownIcon";
+import { FaCheck } from "react-icons/fa";
+import { capitalize } from "../../../../../../utils/utils";
+import { useState } from "react";
 
-const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => (
+const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => {
+  return (
     <Dropdown>
       <DropdownTrigger className="hidden sm:flex">
         <Button
@@ -22,7 +24,9 @@ const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => (
         selectedKeys={selectedKeys}
         selectionMode="multiple"
         selectedIcon={<FaCheck />}
-        onSelectionChange={onSelectionChange}
+        onSelectionChange={(keys) => {
+          keys.has("all") ? null : onSelectionChange(keys);
+        }}
         className="w-full rounded-lg text-left"
         itemClasses={{
           base: [
@@ -36,6 +40,17 @@ const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => (
           ],
         }}
       >
+        <DropdownItem
+          key="all"
+          className="capitalize justify-between"
+          textValue="All"
+          onClick={() => {
+            const allKeys = new Set([...options.map((creator) => creator.name)]);
+            onSelectionChange(allKeys);
+          }}
+        >
+          <span className="font-bold">SELECCIONAR TODOS</span>
+        </DropdownItem>
         {options.map((creator) => (
           <DropdownItem
             key={creator.name}
@@ -48,6 +63,6 @@ const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => (
       </DropdownMenu>
     </Dropdown>
   );
-  
-  export default CreadoresDropdown;
-  
+};
+
+export default CreadoresDropdown;

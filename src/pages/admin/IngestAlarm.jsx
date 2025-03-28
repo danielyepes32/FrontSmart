@@ -2,39 +2,38 @@
 import React from "react";
 //Libreria usada para establecer el maneja de ventanas emergentes modal
 import {useDisclosure} from "@nextui-org/react";
-//Componente
-import {columns} from "../../utils/tests/data"  //"../../utils/tests/data";
+import {columnsAlarmsFetch} from "../../utils/tests/data"  //"../../utils/tests/data";
 //Componente de Servicio para conexiones con la API
-import apiService from '../../services/apiService';
-//Componente para el manejo de variables y estados
-import {useState, useEffect} from 'react'
-//Componente superior de la pagina
-import TableTopContent from "../../components/admin/IngestaData/TableTopContent";
-//Componente Inferior de la tabla
-import TableBottomContent from '../../components/admin/IngestaData/TableBottomContent'
-//Componente nextUI para los PopUps modal
+import apiService from "../../services/apiService";
+//Eventos de cambio de variables constant
+import TableTopContent from "../../components/admin/IngestaAlarm/Table/TableTopContent";
+import TableBottomContent from '../../components/admin/IngestaAlarm/Table/TableBottomContent'
 import PopUpModal from "../../components/admin/Shared/PopUpModal/PopUpModal";
+//Libreria para hacer un parse a los datos de tipo fecha
+import {parseAbsoluteToLocal} from "@internationalized/date";
+//Importar luxon para poder agregar zona horaria a un dato de tipo Fecha
+import { DateTime } from 'luxon';
 
-import CustomTable from "../../components/admin/IngestaData/CustomTable";
+import CustomTable from "../../components/admin/IngestaAlarm/Table/CustomTable";
+
+
 
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
-const INITIAL_VISIBLE_COLUMNS = ["meter_id", "meter_code", "status", "creator","create_date","actions"];
+const INITIAL_VISIBLE_COLUMNS = ["alarm_id", "meter_code", "falla_desc","falla_type","tipo","alarm_date", "tipo" ,"actions"];
 
 //Aquí empieza la funcionalidad de la vista IngestaAdmin.jsx
-export default function IngestaAdmin(sidebar) {
+export default function IngestaAlarma(sidebar) {
 
 //En esta parte inicializamos las variables useState, usadas para mejorar la optimización en el manejo de variables
 //----------------------------------------------------------------------------------------------------------------
   //En esta variable se guardarán los medidores que se extraigan de la API
-  const [meters, setMeters] = useState([]);
+  const [meters, setMeters] = React.useState([]);
   //En esta variable se guardarán los medidores que se extraigan de la API
-  const [tapas, setTapas] = useState([]);
-  //En esta variable se guardan los creadores únicos de los medidores
-  const [creators, setCreators] = useState([]);
+  const [tapas, setTapas] = React.useState([]);
   //Variable para activar el circulo de carga de datos en caso de estar ejecutando acciones de API
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = React.useState(true);
   //Variable para guardar el tamaño del conteo de medidores totales puesto que los datos se traen por pagination
-  const [metersLength, setMetersLength] = useState(0);
+  const [metersLength, setMetersLength] = React.useState(0);
   //Variable que establece qué numero del pagination que se encuentra activa
   const [page, setPage] = React.useState(1);
   //Esta variable es la cantidad de registros por consulta
@@ -42,17 +41,16 @@ export default function IngestaAdmin(sidebar) {
   //Variable que establece la columna y el orden de filtrado para la consulta, es un JSON con el nombre de columna
   //y el orden (ascending, descending)
   const [sortDescriptor, setSortDescriptor] = React.useState({});
-  //En esta variable se guardan los nombre de creadores para los cuales se hará el filtrado en la consulta
+  //En esta variable se guardan los typos de fallas para los cuales se hará el filtrado en la consulta
   //En caso de estar todos activos se setea "all"
-  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [fallaTypeFilter, setFallaTypeFilter] = React.useState("all");
+  //En esta variable se guardan todas las descripciones de las fallas para los cuales se hará el filtrado en la consulta
   //En caso de estar todos activos se setea "all"
-  const [statusSelection, setStatusSelection] = React.useState(["REVISION", "INCIDENCIA", "NORMAL"]);
-  //Esta variable se usa para guardar los creadores unicos
-  const [statusCreators, setFormattedCreators] = useState([]);
-  //Esta variable se usa para guardar los status unicos
-  const [statusStatus, setFormattedStatus] = useState([]);
-  //Variable para definir que ocurrió un error
-  const [theresError, setTheresError] = useState(false);
+  const [fallaDescFilter, setFallaDescFilter] = React.useState("all");
+  //Esta variable guardará todos los tipos de fallas
+  const [fallaType, setFallaType] = React.useState([]);
+  //Esta variable se usa para guardar todas las descripciones de fallas
+  const [fallaDesc, setFallaDesc] = React.useState([]);
   //Constante usada para definir si se estan cargando los datos o si en su defecto simplemente no hay datos en la consulta
   const loadingState = React.useMemo(()=>{
     const answer = isLoading === true ? "loading" : "idle";
@@ -64,46 +62,49 @@ export default function IngestaAdmin(sidebar) {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   //Constante para establecer las columnas visibles puesto que estas son dinamicas
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  //Esta constante establece si se está ejecutando o no el autocomplete de los medidores
+  //Variable para establecer el cambio de fechas seleccionadas en el filtro
+  let [date, setDate] = React.useState({
+    //Por default tiene el primer día del mes actual y de fin la fecha actual con zona horaria de perú
+    start: parseAbsoluteToLocal(DateTime.now().setZone('America/Lima').startOf("month").toString()),
+    end: parseAbsoluteToLocal(DateTime.now().setZone('America/Lima').toString()),
+  });
+  //Variable para establecer si está en uso el autocompletado
   const [hasSearchFilter, setVariable] = React.useState(false);
-  //Aquí se establece cual de las posibles acciones de los tres puntos se oprimió
-  const[actionKey, setActionKey] = useState("");
-  //Aqui se establece el valor para saber si se activa o no la ventana emergente
+  //Constante que alverga la action key de los 3 puntos
+  const [actionKey, setActionKey] = React.useState("");
+  //Aqui se establece el valor para saber si se activa o no la ventana emergente modal del actionKey
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-  //Aquí se establece cuál de los registros se seleccionó al oprimir los tres puntos
-  const [selectedMeter, setSelectedMeter] = useState([])
-
+  //Constante que alberga el medidor seleccionado al oprimir las acciones del actionKEY
+  const [selectedMeter, setSelectedMeter] = React.useState([])
 //---------------------------------------------------------------------------------------------------------------
   //Esta es la consulta principal para el metodo getAll del servicio apiService.js en la carpeta services
   //Esta consulta se ejecuta y usa los parametros de consulta
-  useEffect(() => {
+  React.useEffect(() => {
+    //En caso de que no se esté ejecutando el autocomplete (podría mejorar implementando haSearcFilter)
+    if(filterValue === ""){
 
-    if(hasSearchFilter){
-      return;
-    }
     setIsLoading(true);
-    setTheresError(false);
     const controller = new AbortController(); // Crear un AbortController
     const signal = controller.signal; // Obtener la señal
     //Aquí se establece que el fetch o consulta es asincrónico para optimizar el batch
     const fetchData = async () => {
       //Al estar ejecutando el fetch activamos el loading de la data
       //Inicializar la variable fuera del bloque condicional
-      let creatorString = '';
-      let statusString = '';
+      let falla_type_string = '';
+      let falla_desc_string = '';
       //En caso que no todos los creadores estén activos ejecutamos el filtro de creador
-      //&statusFilter es un set, no un JSON
-      if (statusFilter !== 'all'){
+      //&fallaTypeFilter es un set, no un JSON
+      if (fallaTypeFilter !== 'all'){
         //Creamos un arreglo con el set de Datos
-        const creatorsArray = Array.from(statusFilter);
+        const falla_type = Array.from(fallaTypeFilter);
 
         // Unir los elementos del Array en una cadena separada por comas
-        creatorString = creatorsArray.join(',');
+        falla_type_string = falla_type.join(',');
         //console.log(creatorString)
       } 
-      if(statusSelection !== 'all'){
-        const statusArray = Array.from(statusSelection);
-        statusString = statusArray.join(',');
+      if(fallaDescFilter !== 'all'){
+        const falla_desc = Array.from(fallaDescFilter);
+        falla_desc_string = falla_desc.join(',');
       }
       //Luego de tener los parametros de creador ejecutamos el try - catch
       try {
@@ -114,74 +115,122 @@ export default function IngestaAdmin(sidebar) {
           //ordenamiento en caso de haberlo, en caso de haberlo se necesita el nombre de la columna y agregarle un - en caso de ser orden descendente
           ordering: sortDescriptor.direction === 'ascending' ? sortDescriptor.column : `-${sortDescriptor.column}`,
           //parametro de creador
-          creator : statusFilter === 'all' ? '' : creatorString,
+          falla_type : fallaTypeFilter === 'all' ? '' : falla_type_string,
           //Parametro para el status
-          status : statusSelection === 'all' ? '' : statusString
+          falla_desc : fallaDescFilter === 'all' ? '' : falla_desc_string,
+          //Parametro establecido en la api, gte se refiere a greater por lo que se agrega de manera concatenada el valor de inicio de la busqueda en el filtro de calendario
+          fecha_gte : `${date.start["year"]}${date.start["month"] < 10 ? `0${date.start["month"]}` : date.start["month"]}${date.start["day"] < 10 ? `0${date.start["day"]}` : date.start["day"]}`,
+          //Parametro establecido en la api, lte se refiere a lower por lo que se agrega de manera concatenada el valor de fin de la busqueda en el filtro de calendario
+          fecha_lte : `${date.end["year"]}${date.end["month"] < 10 ? `0${date.end["month"]}` : date.end["month"]}${date.end["day"] < 10 ? `0${date.end["day"]}` : date.end["day"]}`
 
         };
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
-        const initialMeters = await apiService.getAll(params, signal);
+        const initialMeters = await apiService.getAllAlarms(params, signal);
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
-        setMeters(initialMeters? initialMeters["results"] : []);
+        setMeters(initialMeters["results"]);
         //usamos el componente "count" de la consulta para establecer el tamaño de los registros
-        setMetersLength(initialMeters? initialMeters["count"]: 0);
+        setMetersLength(initialMeters["count"]);
       } catch (error) {
-        //En caso de error en el llamado a la API se ejecuta un console.error
-        console.error('Error fetching initial meters:', error);
-        setTheresError(true); // Cambia el estado de error a true
+        // En caso de error en el llamado a la API se ejecuta un console.error
+        if (error.response) {
+          // La respuesta del servidor tiene un error (código 4xx o 5xx)
+          console.error('Error response:', error.response.data);
+        } else if (error.request) {
+          // No se recibió respuesta del servidor
+          console.error('Error request:', error.request);
+        } else {
+          // Otro tipo de error
+          console.error('Error:', error.message);
+        }
       }
-      //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
-      if (!signal.aborted) {
-        setIsLoading(false); // Solo desactiva el loading si la solicitud no fue abortada
-      }
+        //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
+        if (!signal.aborted) {
+          setIsLoading(false); // Solo desactiva el loading si la solicitud no fue abortada
+        }
     };
     fetchData();
-    
-
+    //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
     return () => {
       console.warn("Cancelando solicitud anterior...");
       controller.abort(); // Cancelar la solicitud anterior antes de hacer una nueva
     };
-    //Esta consulta se establece al iniciar la pagina de ingesta Data y al haber un cambio en alguna variable de parametros
-  }, [page, rowsPerPage, sortDescriptor, statusSelection , statusFilter, hasSearchFilter]);
+  }
+  }, [page, rowsPerPage, sortDescriptor, fallaDescFilter , fallaTypeFilter, hasSearchFilter===false, date, filterValue ==! ""]);
+  //La consulta de las alarmas se establece al cambiar la pagina, el tamaño de la pagina, el parametro ordering de los datos,
+  //el estatus de las alarmas que en este caso se refiere a si la falla es externa o interna, la seleccion de fallas y solo cuando el autocomplete es falso
+
   // Función para convertir un nombre en formato UID
   const convertToUID = (name) => {
     return name;
   };
 
-  //Fetch para traer los nombres de todos los creadores
-  const fetchUniqueCreators = async () => {
+  //Fetch para traer todos los tipos de fallas
+  const fetchUniqueFallaType = async () => {
     try {
-      const response = await apiService.getCreator();
-      const creators = response.unique_creators;
+      const response = await apiService.getFallaType();
+      const fallaTypes = response.unique_falla_type;
 
       // Formatear los datos
-      return creators.map((creator) => ({
-        name: creator.toUpperCase(),
-        uid: convertToUID(creator),
+      return fallaTypes.map((fallaType) => ({
+        name: fallaType.toUpperCase(),
+        uid: convertToUID(fallaType),
       }));
     } catch (error) {
-      console.error('Error fetching unique creators:', error);
+      console.error('Error fetching unique falla types:', error);
       return [];
     }
   };
 
-  //Fetch para traer todos los posibles estados únicos
-  const fetchUniqueStatus = async () => {
+  //Aqui se guardan los tipos de fallas unicos al ejecutar el fetch de arriba
+  React.useEffect(() => {
+    const getFallaType = async () => {
+      const unique_falla_type = await fetchUniqueFallaType();
+      setFallaType(unique_falla_type);
+    };
+
+    getFallaType();
+  }, []);
+
+
+    //Fetch para traer los nombres de todos los creadores
+  const fetchUniqueFallas = async () => {
+
+    let fallaTypeString = '';
+    //En caso que no todos los creadores estén activos ejecutamos el filtro de creador
+    //&fallaTypeFilter es un set, no un JSON
+    if (fallaTypeFilter !== 'all'){
+      //Creamos un arreglo con el set de Datos
+      const fallaTypeArray = Array.from(fallaTypeFilter);
+
+      // Unir los elementos del Array en una cadena separada por comas
+      fallaTypeString = fallaTypeArray.join(',');
+    }
     try {
-      const response = await apiService.getStatus();
-      const status = response.unique_status;
-  
-      // Formatear los datos
-      return status.map((status) => ({
-        name: status.toUpperCase(),
-        uid: convertToUID(status),
+      const params = {
+        falla_type: fallaTypeFilter === 'all' ? '': fallaTypeString
+      }
+      const response = await apiService.getFallaDesc(params);
+      const fallas = response.results;
+        // Formatear los datos
+      return fallas.map((falla) => ({
+        name: falla["falla_desc"].toUpperCase(),
+        uid: convertToUID(falla["falla_desc"]),
        }));
       } catch (error) {
         console.error('Error fetching unique status:', error);
         return [];
       }
   };
+
+  //Aqui se guardan las fallas unicos al ejecutar el fetch de arriba
+  React.useEffect(() => {
+    const getFallaDesc = async () => {
+      const fallas = await fetchUniqueFallas();
+      setFallaDesc(fallas);
+    };
+  
+    getFallaDesc();
+  }, [fallaTypeFilter]);
 
   //Fetch para traer los nombres de todas las tapas
   const fetchUniqueTapas = async () => {
@@ -195,33 +244,13 @@ export default function IngestaAdmin(sidebar) {
         uid: tapa["tapa_id"],
       }));
     } catch (error) {
-      //console.error('Error fetching unique Tapas:', error);
+      console.error('Error fetching unique Tapas:', error);
       return [];
     }
   };
 
-  //Aqui se guardan los creadores unicos al ejecutar el fetch de arriba
-  useEffect(() => {
-    const getCreators = async () => {
-      const creators = await fetchUniqueCreators();
-      setFormattedCreators(creators);
-    };
-
-    getCreators();
-  }, []);
-
-  //Aqui se guardan los status unicos al ejecutar el fetch de arriba
-  useEffect(() => {
-    const getStatus = async () => {
-      const creators = await fetchUniqueStatus();
-      setFormattedStatus(creators);
-    };
-  
-      getStatus();
-    }, []);
-
-    //Aqui se guardan las tapas unicos al ejecutar el fetch de arriba
-    useEffect(() => {
+    //Aqui se guardan los creadores unicos al ejecutar el fetch de arriba
+    React.useEffect(() => {
       const getTapas = async () => {
         const tapas = await fetchUniqueTapas();
         setTapas(tapas);
@@ -229,49 +258,45 @@ export default function IngestaAdmin(sidebar) {
   
       getTapas();
     }, []);
-
-  //Aqui vamos a llamar la API para la ruta de autocomplete
-  useEffect(() => {
+    //Aqui vamos a llamar la API para la ruta de autocomplete
+    React.useEffect(() => {
     //Al estar ejecutando el fetch activamos el loading de la data
     if (filterValue.length > 0) {
 
       setIsLoading(true);
-
       const controller = new AbortController();
       const signal = controller.signal;
+
       const fetchSuggestions = async () => {
         try {
-          
         //inizializamos los parametros de consultas a la API de consumo
         //console.log("No ha salido")
         const params = {
           q: filterValue,
-          page: 1,
+          page,
           page_size : rowsPerPage
         };
 
-          const response = await apiService.autocompleteMeters(params, signal);
+          const response = await apiService.autocompleteAlarms(params, signal);
           setMeters(response["results"]);
           //usamos el componente "count" de la consulta para establecer el tamaño de los registros
           setMetersLength(response["count"]);
         } catch (error) {
           //En caso de error en el llamado a la API se ejecuta un console.error
           console.error('Error fetching initial meters:', error);
-        } 
-        if (!signal.aborted) {
-          setIsLoading(false); // Solo desactiva el loading si la solicitud no fue abortada
         }
+          //al finalizar independientemente de haber encontrado o no datos se detiene el circulo de cargue de datos
+          !signal.aborted ? setIsLoading(false): null;
+          //console.log("salio");
       };
 
       fetchSuggestions();
-
       // Retornar una función de limpieza que cancela la solicitud activa
       return () => {
         controller.abort();
       };
     }
-  }, [filterValue]);
-
+  }, [filterValue,page,hasSearchFilter===true]);
   //Aquí terminan los llamados a la API
   //----------------------------------------------------------------------------------------------------
 
@@ -286,18 +311,16 @@ export default function IngestaAdmin(sidebar) {
   //Esta función se usa para calcular las columnas que se etsablecen como visibles
   const headerColumns = React.useMemo(() => {
 
-    if (visibleColumns === "all") return columns;
+    if (visibleColumns === "all") return columnsAlarmsFetch;
 
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    return columnsAlarmsFetch.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);//Se ejecuta cada que hay un cambio en la constante vsisibleColumns
 
   
   //En esta función se usa para filtrar los medidores según el autocomplete en el campo meter_code
   const filteredItems = React.useMemo(() => {
-
     //Se inicializa la variable filteredUsers con el valor de los medidores
     //let filteredMeters = meters;
-
     //En caso de enontrarse activo el autocomplete
     if (filterValue != "") {
       setVariable(true)
@@ -319,11 +342,11 @@ export default function IngestaAdmin(sidebar) {
   }, []);
 
   //Volver las llaves de medidor y la pagina a la primera en caso de cambiar el criterio de busqueda para los creadores
-  //statusSelection lo cambia cuando se cambia el estatus de los medidores
+  //fallaDescFilter lo cambia cuando se cambia el estatus de los medidores
   const volverDefault = React.useMemo(() =>{
     setPage(1)
     setSelectedKeys(new Set([]))
-  },[statusFilter, statusSelection])
+  },[fallaTypeFilter, fallaDescFilter])
 
   //Al cambiar el valor de la busqueda del autocomplete este se va actualizando en tiempo real con este callback
   const onSearchChange = React.useCallback((value) => {
@@ -340,9 +363,10 @@ export default function IngestaAdmin(sidebar) {
   {/*Seccion para el PopUp de los medidores paginas*/}
   const popUp = React.useMemo(() => {
 
+    //console.log("Entra al Model")
+    //console.log("OpenState: ", isOpen)
     return (
       <>
-      {/*Componente modal importado del componente PopUpModal.jsx*/}
       <PopUpModal
         isOpenUpdate={isOpen} 
         onOpenChangeUpdate={onOpenChange} 
@@ -355,37 +379,45 @@ export default function IngestaAdmin(sidebar) {
       </>
     );
   },[isOpen]);
-  //El componente se actualiza cada vez que cambie el estado de isOpen
 
   //Usamos memo para describir la parte superior de la tabla como el buscador y los filtros
   const topContent = React.useMemo(() => {
     return (
       <TableTopContent
-        filterValue={filterValue} //El valor de cambio del input del autocomplete
-        onSearchChange={onSearchChange} //Evento de cambio del valor del autocomplete, para que se establezca la primera pagina del paginador y se cambie el valor del autocomplete 
-        setFilterValue={setFilterValue}  //Cambiar el valor del autocomplete
-        statusSelection = {statusSelection}
-        setStatusSelection={setStatusSelection}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        statusOptions={statusCreators}
+        date = {date}
+        setDate = {setDate}
+        filterValue={filterValue}
+        onSearchChange={onSearchChange}
+        setFilterValue={setFilterValue}
+        statusSelection = {fallaDescFilter}
+        setStatusSelection={setFallaDescFilter}
+        statusFilter={fallaTypeFilter}
+        setStatusFilter={setFallaTypeFilter}
+        statusOptions={fallaType}
         visibleColumns={visibleColumns}
         setVisibleColumns={setVisibleColumns}
-        columns={columns}
+        columns={columnsAlarmsFetch}
         users={meters}
+        haFilterSelect={hasSearchFilter}
         usersLength = {metersLength}
-        dataStatusOptions = {statusStatus}
+        dataStatusOptions = {fallaDesc}
         onRowsPerPageChange={onRowsPerPageChange}
+        meter = {selectedMeter}
+        meters = {meters}
+        tapas={tapas}
+        setMeters = {setFilterValue}
       />
     );
   }, [
     filterValue,
-    statusSelection,
-    statusFilter,
+    fallaDescFilter,
+    fallaTypeFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
     metersLength,
+    date,
+    fallaDesc
   ]);
 
   {/*Seccion para el pasa paginas*/}
@@ -402,8 +434,36 @@ export default function IngestaAdmin(sidebar) {
     );
   }, [selectedKeys, metersLength, page, pages, hasSearchFilter]);
 
-  const customTable = React.useMemo(() => {
-    return (
+  //configuración tailwind para los componentes de la tabla de nextUI
+  const classNames = React.useMemo(
+    () => ({
+      wrapper: ["max-h-[382px]", "max-w-3xl"],
+      th: ["bg-transparent", "text-default-500", "border-b", "border-divider","items-center","justify-center","place-items-center","text-center"],
+      td: [ 
+        //Agregar las celdas en la mitad del componente
+        "align-middle text-center",
+        // changing the rows border radius
+        // first
+        "group-data-[first=true]:first:before:rounded-none",
+        "group-data-[first=true]:last:before:rounded-none",
+        // middle
+        "group-data-[middle=true]:before:rounded-none",
+        // last
+        "group-data-[last=true]:first:before:rounded-none",
+        "group-data-[last=true]:last:before:rounded-none",
+      ],
+    }),
+    [],
+  );
+
+  //console.log(sidebar)
+  //console.log("creadoresSelect: ", fallaType)
+  //console.log("Status select: ", fallaDescFilter)
+  //console.log("Filtro", fallaTypeFilter)
+  //console.log("Filtro Status", statusSelection)
+
+  return (
+    <div className={`p-4 bg-gray-200 flex h-full lg:h-screen flex-col col-span-6 overflow-auto`}>
       <CustomTable
         bottomContent={bottomContent}
         selectedKeys={selectedKeys}
@@ -419,16 +479,7 @@ export default function IngestaAdmin(sidebar) {
         setActionKey={setActionKey}
         setSelectedMeter={setSelectedMeter}
         onOpen={onOpen}
-        theresError={theresError}
       />
-    );
-  }, [meters, loadingState, selectedKeys, topContent, bottomContent]);
-
-  return (
-    <>
-    <div className={`p-4 bg-gray-200 flex h-full lg:h-screen flex-col col-span-6 overflow-auto`}>
-      {customTable}
     </div>
-    </>
   );
 }

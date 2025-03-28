@@ -1,8 +1,8 @@
 import { Button } from "@nextui-org/button";
 
-const MeterDetails = ({ meter, onOpen, setActivateStatus }) => (
+const MeterDetails = ({ meter, onOpen, setActivateStatus, setShowType }) => (
     Object.entries(meter)
-      .filter(([key]) => key !== 'create_time_id' && key !== 'create_ts_id')
+      .filter(([key]) => key !== 'create_time_id' && key !== 'create_ts_id' && key !== 'meter_type' && key !== 'tapa_id')
       .map(([key, value]) => (
         <div key={key} className="flex justify-between place-items-center">
           <span className="font-bold uppercase">
@@ -10,21 +10,21 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus }) => (
             (() => {
               switch (key) {
                 case 'meter_id':
-                  return 'ID';
+                  return 'ID CLIENTE';
                 case 'meter_code':
-                  return 'Código del medidor';
+                  return 'ID MEDIDOR';
                 case 'meter_type':
                   return 'Identificación de tipo';
-                case 'creaor':
+                case 'creator':
                   return 'Usuario';
                 case 'status':
-                  return 'Estado del medidor';
+                  return 'CONDICION';
                 case 'tapa_id':
                   return 'Identificación de Tapa';
                 case 'tapa_desc':
                   return 'Descripción de Tapa';
                 case 'create_date':
-                  return 'Fecha de creación';
+                  return 'Fecha de REGISTRO';
                 case 'status_update_date':
                   return 'última actualización de estado';
                 case 'falla_desc':
@@ -37,6 +37,10 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus }) => (
                   return 'Tipo de alarma';
                 case 'falla_type':
                   return 'Tipo de registro';
+                case 'latitude':
+                  return 'coordenadas (latitude)';
+                case 'longitude':
+                  return 'coordenadas (longitude)';
                 default:
                   return key; // Opcional: para manejar otros casos
               }
@@ -51,6 +55,7 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus }) => (
               onPress={value !== 'NORMAL' ? () => {
                 setActivateStatus(true);
                 onOpen();
+                value == 'INCIDENCIA' ? setShowType(true) : setShowType(false);
               } : null}
             >
               {value}
@@ -69,7 +74,7 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus }) => (
                 })
               : value !== null
               ? value
-              : 'NO DATA'}
+              : 'Sin información'}
           </span>
           )}
         </div>

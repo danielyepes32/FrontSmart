@@ -143,7 +143,8 @@ const CustonModal = ({selectedGateway, isVisible, setIsVisible,}) => {
             case "status_time":
               // Crear un objeto de fecha a partir del string
               const date = new Date(cellValue);
-    
+              date.setHours(date.getHours() + 5); // Sumar 5 horas
+
               // Obtener los componentes de la fecha
               const year = date.getFullYear();
               const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados

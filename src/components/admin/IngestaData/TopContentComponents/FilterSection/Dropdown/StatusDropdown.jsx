@@ -42,7 +42,9 @@ const StatusDropdown = ({ selectedKeys, onSelectionChange, options }) => (
           className="capitalize justify-between"
           textValue={status.name}
         >
-          {capitalize(status.name)}
+          {
+            status.name === 'NO OPERATIVO' ? capitalize('RETIRADO DE PLATAFORMA'): capitalize(status.name)
+          }
         </DropdownItem>
       ))}
     </DropdownMenu>
