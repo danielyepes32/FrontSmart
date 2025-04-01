@@ -97,7 +97,6 @@ const CustomTable = ({
             loadingContent={
               theresError ? (
                 <div className="flex flex-col items-center justify-center mt-5 pt-10 text-red-500">
-                    <ExclamationCircleIcon className="w-10 h-10 mb-2" />
                     <p>Error al obtener los datos</p>
                 </div>
               ) : (
