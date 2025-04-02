@@ -400,10 +400,12 @@ export default function IngestaAdmin(sidebar) {
         hasSearchFilter={hasSearchFilter}
       />
     );
-  }, [selectedKeys, metersLength, page, pages, hasSearchFilter]);
+  }, [selectedKeys, metersLength, page, pages, hasSearchFilter, isOpen]);
 
-  const customTable = React.useMemo(() => {
-    return (
+
+  return (
+    <>
+    <div className={`p-4 bg-gray-200 flex h-full lg:h-screen flex-col col-span-6 overflow-auto`}>
       <CustomTable
         bottomContent={bottomContent}
         selectedKeys={selectedKeys}
@@ -421,13 +423,6 @@ export default function IngestaAdmin(sidebar) {
         onOpen={onOpen}
         theresError={theresError}
       />
-    );
-  }, [meters, loadingState, selectedKeys, topContent, bottomContent]);
-
-  return (
-    <>
-    <div className={`p-4 bg-gray-200 flex h-full lg:h-screen flex-col col-span-6 overflow-auto`}>
-      {customTable}
     </div>
     </>
   );

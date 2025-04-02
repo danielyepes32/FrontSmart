@@ -124,6 +124,7 @@ const renderCell = (user, columnKey, setActionKey, setSelectedMeter, onOpen) => 
               <DropdownItem
                 key='details'
                 className="hover:bg-default-100"
+                onClick={console.log("Detalles")}
               >Ver Detalles
               </DropdownItem>
               <DropdownItem
