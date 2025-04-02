@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {call_refresh} from './loginService';
-const baseUrl = 'http://localhost:8000/api/v1/'; //3.135.197.152
+const baseUrl = 'http://3.135.197.152:8000/api/v1/'; //3.135.197.152
 
 const withRetry = (fn) => {
   return async (...args) => {
