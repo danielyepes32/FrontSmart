@@ -96,6 +96,8 @@ const MainModal = (
     }
     ) => {
 
+      console.log("meter: ", meter)
+
       const {isOpen, onOpen, onOpenChange} = useDisclosure();
       const [pdfData, setPdfData] = React.useState(null);
       const [pdfUrl, setPdfUrl] = React.useState(null);

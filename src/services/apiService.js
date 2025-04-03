@@ -35,6 +35,22 @@ const getAll = withRetry(async (params, signal) => {
     return response.data;
 });
 
+const getTypeReading = withRetry(async (meterId, signal) => {
+  const response = await axios.get(baseUrl+`lecturas/tipo-lectura/${meterId}/?format=json`, {
+    withCredentials: true,
+    signal: signal || undefined // Pasar la señal de aborto
+  });
+  return response.data;
+})
+
+const getLastReading = withRetry(async (meterId, signal) => {
+  const response = await axios.get(baseUrl+`lecturas/ultima-lectura/${meterId}/?format=json`, {
+    withCredentials: true,
+    signal: signal || undefined // Pasar la señal de aborto
+  });
+  return response.data;
+})
+
 const deleteUserById = withRetry(async (userId) => {
   const response = await axios.delete(`${baseUrl}users/delete-user/${userId}/`, {
       withCredentials: true
@@ -373,5 +389,7 @@ export default {
   getCountOnlineGateways,
   createUser,
   deleteUserById,
-  autocompleteIncidencias
+  autocompleteIncidencias,
+  getTypeReading,
+  getLastReading
 };
