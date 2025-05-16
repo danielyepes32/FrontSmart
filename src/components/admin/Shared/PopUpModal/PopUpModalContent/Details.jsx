@@ -11,16 +11,22 @@ const LABELS_MAP = {
   status: "CONDICIÓN",
   tapa_desc: "Descripción de Tapa",
   create_date: "Fecha de REGISTRO",
-  status_update_date: "Última actualización de estado",
+  status_update_date: "Última fecha de comunicación",
   falla_desc: "Descripción de falla",
   falla_id: "Identificación de falla",
   falla: "Identificación de falla",
   tipo: "Tipo de alarma",
-  falla_type: "Tipo de registro",
+  falla_type: "Tipo de ALARMA",
   latitude: "Coordenadas (latitud)",
   longitude: "Coordenadas (longitud)",
-  typeReading: "Tipo de lectura",
-  lastReading: "última lectura"
+  typeReading: "Tipo de comunicación",
+  lastReading: "última lectura",
+  incidencia_id : "Identificador",
+  fecha_incidencia: "FECHA DE REGISTRO",
+  alarm_date : "FECHA DE ALARMA",
+  equip_id : "ID GATEWAY",
+  online_status : "ESTADO DEL GATEWAY",
+  last_update_time : "ultima actualización"
 };
 
 const MeterDetails = ({ meter, onOpen, setActivateStatus, setShowType }) => {
@@ -90,10 +96,11 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus, setShowType }) => {
   }, [meter]);
 
   return Object.entries({ ...meter, typeReading, lastReading })
-    .filter(([key]) => !["create_time_id", "create_ts_id", "meter_type", "tapa_id"].includes(key))
+    .filter(([key]) => !["create_time_id", "create_ts_id", "meter_type", "tapa_id", "img", "falla_id", "falla", "alarm_pk", "alarm_id", "alarm_time_id", "alarm_timestamp_id", "recv_time_id", "recv_timestamp_id"].includes(key))
     .map(([key, value]) => {
       const label = LABELS_MAP[key] || key;
       const isStatus = key === "status";
+      console.log(key)
 
       return (
         <div key={key} className={`${key === 'cobertura' ? 'mt-5':''} flex justify-between place-items-center`}>
@@ -130,6 +137,15 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus, setShowType }) => {
               variant="shadow"
               color={value === 'DIARIO' ? 'success': value === 'INTERMITENTE' ? 'warning' : value === 'WALKBY' || value === 'SIN LECTURA' ? 'danger': 'default'}
               size="md"
+              onClick={
+                value !== "Cargando..."
+                  ? () => {
+                      setActivateStatus(true);
+                      onOpen();
+                      setShowType('LECTURAS');
+                    }
+                  : null
+              }
               >
               {value ?? "Sin información"}
             </Chip>
@@ -147,6 +163,20 @@ const MeterDetails = ({ meter, onOpen, setActivateStatus, setShowType }) => {
             <span className={`${value === 'Cargando...' || value === '' || value === undefined ? 'hidden':'block'}`}>metros cúbicos </span>
             <TbMeterCube className={`${value === 'Cargando...' || value === '' || value === undefined ? 'hidden':'block'} font-bold my-2`}/>
             </div>
+          ) : key === 'fecha_incidencia' ? (
+            <span className={``}>
+              {key === "fecha_incidencia" && value
+                ? new Date(value).toLocaleString("es-ES", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    timeZone: "UTC",
+                  })
+                : value ?? "Sin información"}
+            </span>
           ) : (
             <span className={``}>
               {key === "status_update_date" && value

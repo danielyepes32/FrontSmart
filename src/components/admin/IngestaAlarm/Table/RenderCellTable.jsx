@@ -6,6 +6,7 @@ import { VerticalDotsIcon } from '../../Shared/Icons/VerticalDotsIcon';
 const statusColorMap = {
   INCIDENCIA: "danger",
   ALARMA: "warning",
+  INACTIVO: "pueple-100"
 };
   
 

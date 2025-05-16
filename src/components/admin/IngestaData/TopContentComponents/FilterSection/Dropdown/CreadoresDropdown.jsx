@@ -2,9 +2,10 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@
 import { ChevronDownIcon } from "../../../../Shared/Icons/ChevronDownIcon";
 import { FaCheck } from "react-icons/fa";
 import { capitalize } from "../../../../../../utils/utils";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => {
+
   return (
     <Dropdown>
       <DropdownTrigger className="hidden sm:flex">
@@ -41,12 +42,17 @@ const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => {
         }}
       >
         <DropdownItem
-          key="all"
+          isSelected = {false}
+          hideSelectedIcon = {true}
           className="capitalize justify-between"
-          textValue="All"
           onClick={() => {
-            const allKeys = new Set([...options.map((creator) => creator.name)]);
-            onSelectionChange(allKeys);
+            if ((selectedKeys.size >= options.length)|| selectedKeys == 'all'){
+              const keys = new Set([options[0].name])
+              onSelectionChange(keys)
+            } else {
+              const allKeys = new Set([...options.map((creator) => creator.name)]);
+              onSelectionChange(allKeys);
+            }
           }}
         >
           <span className="font-bold">SELECCIONAR TODOS</span>

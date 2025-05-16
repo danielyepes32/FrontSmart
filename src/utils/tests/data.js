@@ -7,6 +7,13 @@ const columns = [
   {name: "ACCION", uid : "actions", sortable: true},
 ];
 
+const readingsColumns = [
+  {name: "ID MEDIDOR", uid: "meter_id", sortable: true},
+  {name: "ID GATEWAY", uid: "gateway_id", sortable: true},
+  {name: "VOLUMEN REGISTRADO", uid: "real_volume", sortable: true},
+  {name: "FECHA REGISTRO", uid : "datetime", sortable : true}
+];
+
 const columnsError = [
   {name: "ID", uid: "incidencia_id", sortable: true},
   {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
@@ -16,22 +23,22 @@ const columnsError = [
 ]
 
 const columnsAlarmsFetch = [
-  {name: "ID", uid: "alarm_id", sortable: true},
+  //{name: "ID MEDIDOR", uid: "alarm_id", sortable: true},
   {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
-  {name: "FALLA", uid: "falla_desc", sortable: true},
-  {name: "CATEGORIA ALARMA", uid: "falla_type", sortable: true},
-  {name: "TIPO", uid: "tipo", sortable: true},
-  {name: "FECHA DE REPORTE", uid: "alarm_date", sortable: true},
+  {name: "ALARMA", uid: "falla_desc", sortable: true},
+  {name: "CLASIFICACIÓN DE ALARMA", uid: "falla_type", sortable: true},
+  {name: "IMPORTANCIA", uid: "tipo", sortable: true},
+  {name: "FECHA DE ALARMA", uid: "alarm_date", sortable: true},
   {name: "ACCION", uid: "actions", sortable: true},
 ]
 
 const columnsErrorFetch = [
-  {name: "ID", uid: "incidencia_id", sortable: true},
+  //{name: "ID", uid: "incidencia_id", sortable: true},
   {name: "ID MEDIDOR", uid: "meter_code", sortable: true},
-  {name: "FALLA", uid: "falla_desc", sortable: true},
-  {name: "ENCARGADO", uid: "encargado", sortable: true},
+  {name: "INCIDENCIA", uid: "falla_desc", sortable: true},
+  {name: "ENCARGADO", uid: "USUARIO", sortable: true},
   {name: "CATEGORIA", uid: "tipo", sortable: true},
-  {name: "FECHA DE REPORTE", uid: "fecha_incidencia", sortable: true},
+  {name: "REGISTRO DE INCIDENCIA", uid: "fecha_incidencia", sortable: true},
   {name: "ACCION", uid: "actions", sortable: true},
 ]
 
@@ -69,11 +76,11 @@ const columnsStatus = [
 
 const columnsGateways = [
   {name: "ID GATEWAY", uid: "equip_id", sortable: true},
-  {name: "ESTATUS", uid: "online_status", sortable: true},
+  {name: "ESTADO", uid: "online_status", sortable: true},
   {name: "LATITUDE", uid: "latitude", sortable: true},
   {name: "LONGITUDE", uid : "longitude", sortable: true},
   {name: "BASE", uid: "service_center", sortable : true},
-  {name: "ACTUALIZACIÓN", uid: "last_update_time", sortable : true},
+  {name: "PUNTO DE UBICACIÓN", uid: "last_update_time", sortable : true},
   {name: "ACCIONES", uid : "actions", sortable: true},
 ];
 
@@ -84,4 +91,4 @@ const columsGatewayLogs = [
   {name: "ESTATUS", uid : "online_status", sortable: true}
 ];
 
-export {columns, columnsErrorFetch, columnsError, userColumns, statusOptions, columnsAlarmsFetch, columnsAlarms, columnsStatus, columnsGateways, columsGatewayLogs};
+export {columns, columnsErrorFetch, columnsError, userColumns, statusOptions, columnsAlarmsFetch, columnsAlarms, columnsStatus, columnsGateways, columsGatewayLogs, readingsColumns};

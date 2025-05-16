@@ -39,6 +39,7 @@ const FilterSearchAndDatePicker = ({
         aria-label='Date Picker'
         isDisabled={haFilterSelect}
         value={date}
+        granularity='day'
         onChange={setDate}
         autoFocus={true}
         variant='faded'

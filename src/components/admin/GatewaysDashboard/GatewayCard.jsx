@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardHeader, CardBody, CardFooter, Divider, Button, Chip } from '@nextui-org/react'; // Asumimos que usas Material-UI
-import { Image } from '@nextui-org/react';
+import { Image, Spinner } from '@nextui-org/react';
 
-const GatewayCard = ({ metersLength, animate, handleOnclickCleanFilter }) => {
+const GatewayCard = ({ metersLength, animate, handleOnclickCleanFilter, isLoading }) => {
     return (
         <div className="h-full w-full mb-2 col-span-4 bg-white shadow-lg rounded-[20px]">
             <Card className="w-full h-full margin-auto">
@@ -15,7 +15,7 @@ const GatewayCard = ({ metersLength, animate, handleOnclickCleanFilter }) => {
                         src="/vite.svg" // Asegúrate de que la ruta de la imagen sea correcta
                     />
                     <div className="flex flex-col">
-                        <p className="text-md">Gateways operativos</p>
+                        <p className="text-md">Análisis funcional del gateway</p>
                         <p className="text-small text-default-500">Equipo de medición smart</p>
                     </div>
                 </CardHeader>
@@ -31,10 +31,14 @@ const GatewayCard = ({ metersLength, animate, handleOnclickCleanFilter }) => {
                             Lecturas
                         </span>
                     </div>
-                    <div className='w-full px-4'>
+                    <div className='w-full px-4 flex justify-between place-items-center'>
                         <Chip color="success" className='w-full'>
                             Operativos
                         </Chip>
+                        <Spinner 
+                            color="custom-blue" 
+                            className= {`${isLoading ? 'block' : 'hidden'}`}>
+                        </Spinner>
                     </div>
                     <p className='text-left px-4 py-2'>Lecturas registradas por el gateway</p>
                 </CardBody>

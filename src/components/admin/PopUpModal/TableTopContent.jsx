@@ -15,7 +15,7 @@ export default function TableTopContent({
       </div>
     </div>
     <div className="flex justify-between items-center">
-      <span className="text-default-400 text-small">Hay un total de {usersLength} alarmas posterior a la actualización del status</span>
+      <span className="text-default-400 text-small">Hay un total de {usersLength} registro/s en plataforma</span>
       <label className="flex items-center text-default-400 text-small">
         Registros por pagina:
         <select

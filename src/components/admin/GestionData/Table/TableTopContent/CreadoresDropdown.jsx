@@ -12,7 +12,7 @@ const CreadoresDropdown = ({ selectedKeys, onSelectionChange, options }) => (
           className="Capitalize text-center"
           size='lg'
         >
-          Usuarios
+          Selección de Proyectos
         </Button>
       </DropdownTrigger>
       <DropdownMenu

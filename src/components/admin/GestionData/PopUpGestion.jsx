@@ -21,6 +21,32 @@ import { capitalize } from "../../../utils/utils";
 
 import apiService from '../../../services/apiService';
 
+const LABELS_MAP = {
+  meter_id: "ID CLIENTE",
+  meter_code: "ID MEDIDOR",
+  creator: "Usuario",
+  status: "CONDICIÓN",
+  tapa_desc: "Descripción de Tapa",
+  create_date: "Fecha de REGISTRO",
+  status_update_date: "Última fecha de comunicación",
+  falla_desc: "Descripción de falla",
+  falla_id: "Identificación de falla",
+  falla: "Identificación de falla",
+  tipo: "Tipo de alarma",
+  falla_type: "Tipo de ALARMA",
+  latitude: "Coordenadas (latitud)",
+  longitude: "Coordenadas (longitud)",
+  typeReading: "Tipo de comunicación",
+  lastReading: "última lectura",
+  incidencia_id : "Identificador",
+  fecha_incidencia: "FECHA DE REGISTRO",
+  alarm_date : "FECHA DE ALARMA",
+  equip_id : "ID GATEWAY",
+  online_status : "ESTADO DEL GATEWAY",
+  last_update_time : "ultima actualización",
+  service_center : "USUARIO"
+};
+
 const PopUpGestion = (
     {
         isOpen,
@@ -112,7 +138,7 @@ const PopUpGestion = (
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col w-full gap-1 bg-white border shadow shadow-lx justify-center items-center">{actionKey=== 'details' ? 'DETALLES DEL MEDIDOR' : 'AGREGAR UN NUEVO GATEWAY'}</ModalHeader>
+              <ModalHeader className="flex flex-col w-full gap-1 bg-white border shadow shadow-lx justify-center items-center">{actionKey=== 'details' ? 'DETALLES DEL GATEWAY' : 'AGREGAR UN NUEVO GATEWAY'}</ModalHeader>
               <ModalBody
                 className="flex flex-col w-full gap-1 bg-white border shadow shadow-lx h-auto"
               >
@@ -249,9 +275,12 @@ const PopUpGestion = (
                   ) : (
                     Object.entries(selectedMeter)
                     .filter(([key]) => key !== 'create_time_id' && key !== 'create_ts_id')
-                    .map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="font-bold uppercase">{key}:</span>
+                    .map(([key, value]) => 
+                      {
+                        const label = LABELS_MAP[key] || key;
+                        return (
+                        <div key={key} className="flex justify-between">
+                        <span className="font-bold uppercase">{label}:</span>
                           {key === "online_status" ? 
                             <Button
                               color={value===1 ? 'success' : value === 0 ? 'danger' : 'warning'}
@@ -264,9 +293,26 @@ const PopUpGestion = (
                               }}
                               >
                                 {value === 1 ? 'Online' : value === 0 ? 'Offline' : 'No Info'}
-                            </Button> : <span>{value !== null ? value : 'NO DATA'}</span>}
+                            </Button> : 
+                            key === 'last_update_time' ? (
+                            <span className={``}>
+                              {key === "last_update_time" && value
+                                ? new Date(value).toLocaleString("es-ES", {
+                                    year: "numeric",
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                    timeZone: "UTC",
+                                  })
+                                : value ?? "Sin información"}
+                            </span>
+                            ) :
+                            <span>{value !== null ? value : 'NO DATA'}</span>}
                         </div>
-                      ))
+                      )}
+                      )
                     ) })}
               </ModalBody>
               <ModalFooter

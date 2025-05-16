@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://3.135.197.152:8000/api/v1/'; // 3.135.197.152 Reemplaza con la URL de tu API
+const BASE_URL = 'http://localhost:8000/api/v1/'; // 3.135.197.152 Reemplaza con la URL de tu API
 
 const login = async (username, password) => {
   try {

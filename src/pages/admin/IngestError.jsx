@@ -122,6 +122,8 @@ export default function IngestaAdmin(sidebar) {
           fecha_lte : `${date.end["year"]}${date.end["month"] < 10 ? `0${date.end["month"]}` : date.end["month"]}${date.end["day"] < 10 ? `0${date.end["day"]}` : date.end["day"]}`
 
         };
+        console.log("start: ", params.fecha_gte)
+        console.log("end: ", params.fecha_lte)
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
         const initialMeters = await apiService.getIncidencia(params, signal);
         //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores

@@ -1,9 +1,13 @@
 import React from 'react';
 import { Switch, Divider } from '@nextui-org/react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, getElementsAtEvent } from 'react-chartjs-2';
 import { Image } from '@nextui-org/react';
+import { useRef } from 'react';
 
-const ConteoMedidores = ({ isLoading, isExclusive, setIsExclusive, chartData }) => {
+const ConteoMedidores = ({ isLoading, isExclusive, setIsExclusive, chartData, setFilteredGatewayu}) => {
+
+    const chartRef = useRef();
+
     return (
         <div className="flex col-span-5 w-full h-full px-5">
             <div className="flex flex-col bg-white w-full h-full shadow-2xl rounded-[20px]">
@@ -18,7 +22,7 @@ const ConteoMedidores = ({ isLoading, isExclusive, setIsExclusive, chartData }) 
                     <div className="grid grid-cols-10 w-full h-full">
                         <div className="flex flex-col col-span-5">
                             <span className="ml-5 font-poppins font-regular text-gray-600 text-[20px]">
-                                Conteo de Medidores
+                                Cantidad de gateways operativos con recepción de lecturas
                             </span>
                             <span className="ml-5 font-poppins font-md text-gray-500 text-[15px]">
                                 Equipo de medición Smart
@@ -41,6 +45,26 @@ const ConteoMedidores = ({ isLoading, isExclusive, setIsExclusive, chartData }) 
                         {chartData ? (
                             <Bar
                                 data={chartData}
+                                ref={chartRef}
+                                onClick={(event) => {
+                                    const chart = chartRef.current;
+                                    if (!chart) return;
+                            
+                                    const elements = getElementsAtEvent(chart, event);
+                            
+                                    if (elements.length > 0) {
+                                        const firstElement = elements[0];
+                                        const datasetIndex = firstElement.datasetIndex;
+                                        const index = firstElement.index;
+                            
+                                        const value = chartData.datasets[datasetIndex].data[index];
+                                        const label = chartData.labels[index];
+                                        
+                                        setFilteredGatewayu(label)
+                                        console.log("Etiqueta:", label);
+                                        console.log("Valor:", value);
+                                    }
+                                }}
                                 options={{
                                     responsive: true,
                                     indexAxis: 'y',

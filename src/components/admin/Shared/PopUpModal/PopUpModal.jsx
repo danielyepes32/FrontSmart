@@ -6,6 +6,7 @@ import {
 import apiService from '../../../../services/apiService';
 import { columnsStatus } from '../../../../utils/tests/data';
 import { columnsError } from '../../../../utils/tests/data';
+import { readingsColumns } from '../../../../utils/tests/data';
 //Libreria para hacer un parse a los datos de tipo fecha
 import {parseAbsoluteToLocal} from "@internationalized/date";
 //Importar luxon para poder agregar zona horaria a un dato de tipo Fecha
@@ -21,6 +22,7 @@ import TableInfo from './TableInfoModal/TableInfo';
 import ModalTableInfo from './TableInfoModal/ModalTableInfo';
 import ShowImage from './PopUpModalContent/ShowImage';
 import GenerateReport from './PopUpModalContent/GenerateReport';
+import { PageSizes } from 'pdf-lib';
 
 //Las columnas se pueden agregar o eliminar de la vista, aquí inicializamos por default las necesarias
 const INITIAL_VISIBLE_COLUMNS = ["alarm_pk", "meter_code", "falla_desc","falla_type","alarm_date"];
@@ -216,8 +218,21 @@ const PopUpModal = ({
         //alarm_time_id_lte : `${date.end["year"]}${date.end["month"] < 10 ? `0${date.end["month"]}` : date.end["month"]}${date.end["day"] < 10 ? `0${date.end["day"]}` : date.end["day"]}`
 
       };
+
+      const today = new Date();
+      const firstDayOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDayOfPreviousMonth = new Date(firstDayOfCurrentMonth - 1);
+      const firstDayOfPreviousMonth = new Date(lastDayOfPreviousMonth.getFullYear(), lastDayOfPreviousMonth.getMonth(), 1);
+      
+      const readingParams = {
+        page,
+        page_size: rowsPerPage,
+        start_date: formatDate(firstDayOfPreviousMonth),
+        end_date: formatDate(lastDayOfPreviousMonth)
+      };
       //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado
-      const initialMeters = showType === false ? await apiService.getAllAlarms(params) : await apiService.getIncidencia(params);
+      const initialMeters = showType === false ? await apiService.getAllAlarms(params) : showType == 'LECTURAS' ? await apiService.getAllReading(readingParams, meter.meter_code) : await apiService.getIncidencia(params);
+      console.log(initialMeters)
       //el resultado contiene más de un campo por lo que extraemos solo la parte de "results" para setear los medidores
       setMeters(initialMeters["results"]);
       //usamos el componente "count" de la consulta para establecer el tamaño de los registros
@@ -366,7 +381,7 @@ const PopUpModal = ({
           bottomContent = {bottomContent}
           sortDescriptor = {sortDescriptor}
           setSortDescriptor = {setSortDescriptor}
-          headerColumns = {showType === false ? headerColumns : columnsError}
+          headerColumns = {showType === false ? headerColumns : showType == 'LECTURAS' ? readingsColumns : columnsError}
           metersFetch = {metersFetch}
           renderCell = {renderCell}
           loadingState = {loadingState}
@@ -534,6 +549,7 @@ const PopUpModal = ({
       fetchUpdateMeterData={fetchUpdateMeterData}
       TablePopUpStatus={TablePopUpStatus}
       setShowType={setShowType}
+      showType = {showType}
     />
     </div>
   );

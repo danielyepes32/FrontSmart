@@ -276,11 +276,13 @@ const GatewayDashboard = ({ sidebar }) => {
                     isExclusive={isExclusive}
                     setIsExclusive={setIsExclusive}
                     chartData={chartData}
+                    setFilteredGatewayu = {setFilteredGatewayu}
                 />
                 <div className="flex col-span-4 w-full h-full">
                     <div className="flex flex-col w-full h-full">
                         <div className="w-full flex grid grid-cols-9 mb-2">
                             <GatewayCard
+                                isLoading = {isLoading}
                                 metersLength={metersLength}
                                 animate={animate}
                                 handleOnclickCleanFilter={handleOnclickCleanFilter}

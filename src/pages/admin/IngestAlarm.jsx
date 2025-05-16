@@ -119,9 +119,9 @@ export default function IngestaAlarma(sidebar) {
           //Parametro para el status
           falla_desc : fallaDescFilter === 'all' ? '' : falla_desc_string,
           //Parametro establecido en la api, gte se refiere a greater por lo que se agrega de manera concatenada el valor de inicio de la busqueda en el filtro de calendario
-          fecha_gte : `${date.start["year"]}${date.start["month"] < 10 ? `0${date.start["month"]}` : date.start["month"]}${date.start["day"] < 10 ? `0${date.start["day"]}` : date.start["day"]}`,
+          alarm_time_id_gte : `${date.start["year"]}${date.start["month"] < 10 ? `0${date.start["month"]}` : date.start["month"]}${date.start["day"] < 10 ? `0${date.start["day"]}` : date.start["day"]}`,
           //Parametro establecido en la api, lte se refiere a lower por lo que se agrega de manera concatenada el valor de fin de la busqueda en el filtro de calendario
-          fecha_lte : `${date.end["year"]}${date.end["month"] < 10 ? `0${date.end["month"]}` : date.end["month"]}${date.end["day"] < 10 ? `0${date.end["day"]}` : date.end["day"]}`
+          alarm_time_id_lte : `${date.end["year"]}${date.end["month"] < 10 ? `0${date.end["month"]}` : date.end["month"]}${date.end["day"] < 10 ? `0${date.end["day"]}` : date.end["day"]}`
 
         };
         //Una vez con los parametros ejecutamos la consulta y obtenemos el resultado

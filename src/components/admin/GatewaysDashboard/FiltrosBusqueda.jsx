@@ -26,7 +26,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
         <Card className="w-full h-full margin-auto">
             <CardHeader className="flex gap-3 h-1/9 py-2.5">
                 <div className="flex flex-col">
-                    <p className="text-md">Filtros de busqueda</p>
+                    <p className="text-md">Búsqueda de gateway</p>
                 <p className="text-small text-default-500">Equipo de medición smart</p>
                 </div>
             </CardHeader>
@@ -36,7 +36,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                 >
                 {/*Aquí se configura el autocomplete*/}
                 <div className='flex flex-col w-full h-full'>
-                    <span className="font-poppins font-regular text-gray-500 text-sm"> Filtrado por gateway</span>
+                    <span className="font-poppins font-regular text-gray-500 text-sm"> Buscar gateway</span>
                     <Autocomplete 
                         className="w-full bg-gray-100 rounded-xl" 
                         onInputChange={onSearchChange}
@@ -57,7 +57,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                         }}
                         aria-label="Select an employee"
                         variant='flat'
-                        placeholder='Serial del gateway a detallar'
+                        placeholder='Ingresar el gateway a analizar'
                         popoverProps={{
                         offset: 10,
                         classNames: {
@@ -92,6 +92,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                         description="Seleccione una fecha para filtrar"
                         size="sm"
                         className=''
+                        granularity="day"
                         visibleMonths={1}
                         calendarProps={{
                             classNames:{
@@ -117,7 +118,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                     />
                     {/*DropBox Status*/}
                     <div className="w-full mt-5">
-                        <span className="font-poppins font-regular text-gray-500 text-sm"> Filtrado por base</span>
+                        <span className="font-poppins font-regular text-gray-500 text-sm">Selección de Proyectos</span>
                         <Dropdown>
                             <DropdownTrigger className="hidden w-full sm:flex">
                                 <Button
@@ -126,7 +127,7 @@ const SearchFiltersCard = ({ suggestions, statusCreators, setFilteredGatewayu, s
                                     variant="bordered"
                                     className="Capitalize justify-between w-full"
                                     >
-                                    Creadores
+                                    Proyectos
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu

@@ -18,7 +18,10 @@ const ModalTableInfo = ({
     fetchUpdateMeterData,
     TablePopUpStatus,
     setShowType,
+    showType
   }) => {
+console.log("showType", showType)
+
     return (
       <Modal
         backdrop="tranparent"
@@ -41,7 +44,7 @@ const ModalTableInfo = ({
             <>
               {/* Header */}
               <ModalHeader className="flex flex-col w-full gap-1 bg-custom-blue text-white border shadow shadow-lx text-center font-bold uppercase">
-                {activateStatus ? "Datos de alarma" : "Confirmar Selección de Datos"}
+                {showType === false ? "Datos de alarma" : showType == 'LECTURAS' ? 'Datos de lecturas' : showType === true ? "Datos de incidencias" : "Confirmar Selección de Datos"}
               </ModalHeader>
   
               {/* Body */}

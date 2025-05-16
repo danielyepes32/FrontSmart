@@ -31,7 +31,7 @@ const ReadingCountPieChart = ({ pieChartData, setSelectedCreators }) => {
                 <div className="flex flex-col bg-white w-full h-full">
                     <div className="flex justify-start place-items-center h-auto w-full px-5 py-3">
                         <span className="font-poppins font-regular text-gray-600 text-[20px]">
-                            Conteo de lecturas
+                            Análisis de lecturas
                         </span>
                     </div>
                     <Divider />

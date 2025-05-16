@@ -19,7 +19,7 @@ const MapContainer = ({
                 <FaMap />
               </div>
               <span className="font-poppins font-regular">
-                Gateways
+                Monitoreo de Operatividad
               </span>
               <span className={`ml-auto text-default-500 text-[16px] ${loadingApi ? 'block' : 'hidden'}`}>
                 Obteniendo medidores

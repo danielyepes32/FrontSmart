@@ -90,7 +90,7 @@ const TableInfo = (
         >
         {(item) => (
             <TableRow 
-            key={showType === false ? item.alarm_pk : item.incidencia_id}
+            key={showType === false ? item.alarm_pk : showType == 'LECTURAS' ? item.meter_id : item.incidencia_id}
             >
             {(columnKey) => <TableCell>{renderCell(item, columnKey) === null ? 'NO DATA': renderCell(item, columnKey)}</TableCell>}
             </TableRow>

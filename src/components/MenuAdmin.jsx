@@ -131,7 +131,7 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
                     onClick={() => handleGestionClickEstado()}
                   >
                     <TbStatusChange />
-                    Gestión de estados
+                    Eventos de Anomalías
                   </div>
 
                   {/* Submenú con animación */}
@@ -148,7 +148,7 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
                           onClick={() => handleLinkClick("/admin/error")}
                         >
                           <PiWarningOctagonBold />
-                          Errores
+                          Incidencias
                         </NavLink>
                       </li>
                       <li>
@@ -198,7 +198,7 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
                           className={({ isActive }) => generateLinkClasses(isActive)}
                           onClick={() => handleLinkClick("/admin/gestion")}
                         >
-                          Gestión gateways
+                          Monitoreo de gateways
                         </NavLink>
                       </li>
                       <li className="py-2">
@@ -207,7 +207,7 @@ const Menu = ({ sidebar, handleSidebar, isSuperUser }) => {
                           className={({ isActive }) => generateLinkClasses(isActive)}
                           onClick={() => handleLinkClick("/admin/gateways")}
                         >
-                          Datos gateways
+                          Evaluación de Lecturas
                         </NavLink>
                       </li>
                       <li className="py-2">

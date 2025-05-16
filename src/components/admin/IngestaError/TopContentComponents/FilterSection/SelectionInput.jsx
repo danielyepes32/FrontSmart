@@ -46,6 +46,7 @@ const FilterSearchAndDatePicker = ({
         size="sm"
         className='w-full lg:w-full flex justify-center'
         visibleMonths={1}
+        granularity='day'
         calendarProps={{
           classNames: {
             base: "text-red-100",
@@ -59,8 +60,8 @@ const FilterSearchAndDatePicker = ({
           timeInputLabel: "bg-blue-200 border border-gray-100 rounded-lg px-2 block"
         }}
         defaultValue={{
-          start: parseZonedDateTime("2024-04-01T00:45[America/lima]"),
-          end: DateTime.now().setZone('America/Lima').toFormat("yyyy-MM-dd'T'HH:mm:ss"),
+          start: parseZonedDateTime("2024-04-01[America/lima]"),
+          end: DateTime.now().setZone('America/Lima').toFormat("yyyy-MM-dd"),
         }}
       />
     </div>
